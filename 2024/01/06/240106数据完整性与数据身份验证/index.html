@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="Yu9">
+    
+    <title>
+        
+            数据完整性与数据身份验证 |
+        
+        Yu9&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/blog/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/blog/images/logo.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/brands.min.css">
+    
+        
+            
+                
+<link rel="stylesheet" href="/blog/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"wsyu9a.github.io","root":"/blog/","language":"zh-CN","path":"search.xml"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#999999","title":"Yu9's Blog","author":"Yu9","avatar":"/images/avatar.png","logo":"/images/logo.png","favicon":"/images/logo.png"},"menu":{"Home":"/","Archives":"/archives","Tags":"/tags","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bgc.png","background_img_dark":"/images/bgc.png","description":"Runtime.getRuntime().exec(\"变有钱\")","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/wsYu9a","weixin":"img | /images/wechat.jpg"}},"scroll":{"progress_bar":false,"percent":true,"hide_header":true},"home":{"category":false,"tag":true,"announcement":null},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":true},"datetime_format":"YYYY-MM-DD","copyright_info":false,"share":true,"reward":{"enable":false,"img_link":null,"text":null}},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"obsidian"},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":true,"page_pv":true}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":true},"footer":{"since":2023,"word_count":true,"icp":{"enable":false,"record_code":null,"url":"https://beian.miit.gov.cn"},"site_deploy":{"enable":false,"provider":"github","url":null},"shields_style":{"enable":true,"custom":[{"link_url":null,"img_url":null}]}},"inject":{"enable":true,"css":["/css/custom.css"]},"root":"/blog","source_data":{},"version":"4.1.0"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <i class="pjax-progress-icon fas fa-circle-notch fa-spin"></i>
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left border-box">
+            
+                <a class="logo-image border-box" href="/blog/">
+                    <img src="/blog/images/logo.png">
+                </a>
+            
+            <a class="site-name border-box" href="/blog/">
+               Yu9&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/"
+                            >
+                                
+                                首页
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/archives"
+                            >
+                                
+                                归档
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/tags"
+                            >
+                                
+                                标签
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/about"
+                            >
+                                
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/"
+                    >首页</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/archives"
+                    >归档</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/tags"
+                    >标签</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/about"
+                    >关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        数据完整性与数据身份验证
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/blog/images/avatar.png">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">Yu9</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2024-01-06</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Tue Mar 19 2024 02:59:46 GMT+0000">2024-03-19</span>
+            </span>
+        
+
+        
+
+        
+            <span class="post-tag meta-info-item border-box">
+                <ul class="post-tag-ul">
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/blog/tags/%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8/">前端安全</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>4.5k 字</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-min2read">
+                <i class="icon fas fa-clock"></i>&nbsp;<span>15 分钟</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-pv">
+                <i class="icon fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body">
+                    
+
+                    <h2 id="0X00-前言"><a href="#0X00-前言" class="headerlink" title="0X00 前言"></a>0X00 前言</h2><p>最近到朋友那里薅了一本<strong>python全栈安全</strong>，但是当我打开书仔细翻阅了之后才发现这本python全栈安全和<strong>python安全</strong>没有一丢丢关系。于是抱着多学一点不吃亏的心态还是看了起来。</p>
+<p>那这本python全栈安全和<strong>python安全</strong>没有一丢丢关系。那它都讲了什么啊？揭秘：我个人觉得讲的偏向于数据安全，与python相关的就是使用python的函数、库进行运算。</p>
+<p>最近一直在整java代码审计，这些东西再不用用我怕忘了就！我结合自己的理解以及自己编的一个Yu9与黑客的小故事。和师傅们一块分享一下什么是<strong>数据完整形</strong>与<strong>数据身份加密</strong>。</p>
+<p>在此之前，我们需要先了解一个概念，<strong>散列</strong>。</p>
+<h2 id="0X01-散列"><a href="#0X01-散列" class="headerlink" title="0X01 散列"></a>0X01 散列</h2><h3 id="1、什么是散列？"><a href="#1、什么是散列？" class="headerlink" title="1、什么是散列？"></a>1、什么是散列？</h3><p>Hash（哈希），又称“散列”。散列（hash）英文原意是“混杂”、“拼凑”、“重新表述”的意思。</p>
+<p>在某种程度上，散列是与排序相反的一种操作，排序是将集合中的元素按照某种方式比如首字母a、b、c…排列在一起，而散列通过计算哈希值，打破元素之间原有的关系，使集合中的元素按照散列函数的分类进行排列。</p>
+<h3 id="2、散列的发展史"><a href="#2、散列的发展史" class="headerlink" title="2、散列的发展史"></a>2、散列的发展史</h3><p><strong>早期散列函数</strong></p>
+<p>在计算机科学的早期阶段，最早的散列函数是非常简单的算法，例如，取数据的某个字节作为哈希值，或者对数据进行简单的运算（如求和、乘法等）得到哈希值。这些简单的散列函数通常无法提供良好的散列性能和安全性。</p>
+<p><strong>数字校验和</strong></p>
+<p>随着计算机网络的兴起，人们开始关注数据完整性的问题。校验和算法应运而生，用于验证数据在传输过程中是否发生了变化。</p>
+<p>常见的校验和算法包括CRC（循环冗余校验）和校验和位的累加等。这些算法通过对数据进行散列运算和异或操作，生成一段固定长度的校验和，以便接收方验证数据的完整性。</p>
+<p><strong>哈希表</strong></p>
+<p>20世纪70年代，散列表成为一种常见的数据结构，被广泛应用于快速查找。散列表使用散列函数将关键字映射到数组的特定位置，以实现常数时间的查找、插入和删除操作。</p>
+<p><strong>密码学</strong></p>
+<p>在密码学中，散列函数被广泛应用于生成消息摘要，以用于数字签名和数据完整性验证。</p>
+<p>例如，MD5是一种广泛使用的散列算法，它将任意长度的数据转换为128位的哈希值。然而，随着计算机计算能力的增强，MD5逐渐暴露出<strong>碰撞</strong>的安全问题，因此被SHA-1等更安全的散列算法取代。</p>
+<p><strong>安全散列算法</strong></p>
+<p>为了应对散列算法的安全性问题，人们开始研究和设计更安全的散列算法。SHA-2系列（如SHA-256）和SHA-3系列是最常见的安全散列算法。</p>
+<p>这些算法在设计上更加复杂和安全，并且具备抗碰撞、抗预映射和抗区分攻击等特性。此外，还有一些新型的散列算法，如blake2和whirlpool等，它们在特定场景下具有更好的性能和安全性。</p>
+<p><strong>散列算法的应用扩展</strong></p>
+<p>随着计算机科学和信息安全的不断发展，散列算法的应用范围也不断扩展。散列算法被广泛应用于密码存储、数字证书、数据验证、文件指纹、随机数生成和密钥派生等领域，以提供数据的完整性、唯一性和安全性保障。同时，散列算法也为分布式系统、大数据处理和区块链等领域提供了基础支持。</p>
+<h3 id="3、碰撞"><a href="#3、碰撞" class="headerlink" title="3、碰撞"></a>3、碰撞</h3><h4 id="什么是碰撞？"><a href="#什么是碰撞？" class="headerlink" title="什么是碰撞？"></a>什么是碰撞？</h4><p>在上文中我们提到了<strong>碰撞</strong>一词，接下来就详细讲讲什么是碰撞。</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/05/6596ee5171033.png"  alt="image-20240105014345135"></p>
+<p>举个例子，通过例子来解释哈：		</p>
+<p>通常我们存储数据会使用到<strong>数组</strong>，在查找某个元素是否存在的过程中，就需要挨个<strong>循环比较</strong>。一旦存储的内容数量特别多，我们在查找时就需要大量时间。</p>
+<p>在java中有<code>hashCode()</code>函数，它就是一个哈希算法，它的输入是任意字符串，输出是固定的4字节<code>int</code>整数。</p>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;hello123&quot;</span>.hashCode(); <span class="comment">// 0x5e918d2</span></span><br><span class="line"><span class="string">&quot;hello456&quot;</span>.hashCode(); <span class="comment">// 0x7a9d88e8</span></span><br><span class="line"><span class="string">&quot;hello789&quot;</span>.hashCode(); <span class="comment">// 0xa0dbae2f</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在存入数据时，通过<code>hashCode()</code>计算出一个<code>hash值</code>来标记它的位置</li>
+<li>在查找数据时，先计算出他的位置，然后去那个位置查看是否存在就好了</li>
+</ul>
+<p>但是<code>hashCode()</code>输出是4字节整数，最多只有<strong>4294967296</strong>种输出，但输入的数据长度是不固定的，有无数种输入。所以，哈希算法是把一个无限的输入集合映射到一个有限的输出集合，必然会出现相同的结果，这就是<strong>碰撞</strong>。</p>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;AaAaAa&quot;</span>.hashCode(); <span class="comment">// 0x7460e8c0</span></span><br><span class="line"><span class="string">&quot;BBAaBB&quot;</span>.hashCode(); <span class="comment">// 0x7460e8c0</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="碰撞能不能避免？"><a href="#碰撞能不能避免？" class="headerlink" title="碰撞能不能避免？"></a>碰撞能不能避免？</h4><p>答案是不能。哈希算法是把一个<strong>无限的输入</strong>集合映射到一个<strong>有限的输出</strong>集合，必然会产生碰撞。</p>
+<p>碰撞不可怕，我们担心的不是碰撞，而是碰撞的概率，因为碰撞概率的高低关系到哈希算法的安全性。一个安全的哈希算法必须满足：</p>
+<ul>
+<li>碰撞概率低；</li>
+<li>不能猜测输出。</li>
+</ul>
+<h3 id="4、散列的特征"><a href="#4、散列的特征" class="headerlink" title="4、散列的特征"></a>4、散列的特征</h3><ul>
+<li>相同的输入一定得到相同的输出；</li>
+<li>不同的输入大概率得到不同的输出。</li>
+</ul>
+<h3 id="5、选择加密散列函数"><a href="#5、选择加密散列函数" class="headerlink" title="5、选择加密散列函数"></a>5、选择加密散列函数</h3><h4 id="不安全的散列函数"><a href="#不安全的散列函数" class="headerlink" title="不安全的散列函数"></a>不安全的散列函数</h4><ul>
+<li>MD5</li>
+<li>SHA-1</li>
+</ul>
+<p><strong>MD5</strong>是一个过时的128位散列函数，是因为每一个原始密码都会生成一个对应的固定密码，也就是说一个字符串生成的MD5 值是永远不变的。 这样的话，虽然它是不可逆的，但可以被穷举。</p>
+<p><strong>SHA-1</strong>是一个过时的128位散列函数，SHA-1的碰撞攻击是在2005年被首次公开揭示，但随着时间的推移，攻击者的攻击方法和技术也在不断进步。2017Google研究人员宣布完成全球首例SHA-1哈希碰撞。从理论上说，SHA-1此刻起就不在安全！</p>
+<h4 id="安全的散列函数"><a href="#安全的散列函数" class="headerlink" title="安全的散列函数"></a>安全的散列函数</h4><ul>
+<li>SHA-2</li>
+<li>SHA-3</li>
+<li>BLAKE2</li>
+</ul>
+<p><strong>SHA-2</strong>是一组散列函数家族，包括SHA-224、SHA-256、SHA-384、SHA-512等。目前我们只需关注SHA-256即可。why？因为这将是我们目前碰多最多的加密散列，我们采用的每个系统都在使用它。我们部署应用程序所使用的操作系统和网络协议都依赖SHA-256。它是安全可靠的，得到了很好的支持。</p>
+<p><strong>SHA-3</strong>是美国国家标准技术研究所在2015年发布的一组散列函数家族。它是继SHA-1和SHA-2之后的最新一代散列函数标准。与SHA-1和SHA-2不同，SHA-3采用了全新的设计结构，称为基于海绵构造的Keccak算法。它提供了更高的安全性和更好的性能。SHA-3家族包括多个变体，如SHA-3-224、SHA-3-256、SHA-3-384、SHA-3-512等，分别生成不同长度的哈希值。SHA-3被广泛应用于密码学和安全领域，用于确保数据的完整性、验证数字签名、生成消息摘要等。相较于之前的散列函数，SHA-3具有更强的抗碰撞能力和抗预映像能力，提供了更高的安全性。尽管SHA-3已经发布并且被广泛研究和应用，目前仍然有许多系统和应用程序使用SHA-2或者较早的散列函数。SHA-3的采用还没有形成势头。</p>
+<p><strong>BLAKE2</strong>是一种现代的、<strong>快速</strong>且安全的散列函数，它可以生成不同长度的哈希值。注意标黑的快速，BLAKE2利用现在cpu架构以极快的速度进行散列。如果需要对大量数据进行散列，可以考虑BLAKE2。 </p>
+<h2 id="0X02、数据完整性"><a href="#0X02、数据完整性" class="headerlink" title="0X02、数据完整性"></a>0X02、数据完整性</h2><h4 id="1、什么是数据完整性？"><a href="#1、什么是数据完整性？" class="headerlink" title="1、什么是数据完整性？"></a>1、什么是数据完整性？</h4><p><strong>数据完整性</strong>，字面意思理解就可以。同时它也是数据不会被意外修改的保证！那么，什么情况下会导致文件不完整捏？</p>
+<ul>
+<li><strong>感染病毒</strong>：比方说你的系统中了病毒，病毒感染了某个软件安装包或者某个可执行程序。那么该文件的完整性就被破坏了。</li>
+<li><strong>植入木马&#x2F;后门</strong>：还有一种文件不完整的情况，是被别有用心的人植入木马或后门。比方说某些国内的软件下载站点，它们提供的 Windows 安装光盘镜像已经被安置了后门。</li>
+<li><strong>传输故障</strong>：这种情况主要发生在网络下载时。因为网络传输是有可能发生误码的（传输错误），另外还有可能下载到快结束的时候断线（没下载全）。这些情况都会导致你下载的文件不完整。</li>
+</ul>
+<h4 id="2、完整性校验"><a href="#2、完整性校验" class="headerlink" title="2、完整性校验"></a>2、完整性校验</h4><p>既然提到数据完整性，那就不得不讲讲<strong>完整性校验</strong>。</p>
+<p>例如，很多知名的软件，除了在官网上提供下载，还会相应提供下载软件的散列值。当你下载好某个软件之后，先在自己电脑里计算一下散列值，然后跟官方网站提供的散列值对比一下。如果散列值一样，通常就说明没问题。</p>
+<p><strong>最主要的目的就是：查看数据有没有被篡改。</strong></p>
+<h4 id="3、Yu9与黑客的小故事"><a href="#3、Yu9与黑客的小故事" class="headerlink" title="3、Yu9与黑客的小故事"></a>3、Yu9与黑客的小故事</h4><p>Yu9的公司有一个文档管理系统，为了防止会黑客对其中文档的篡改，Yu9在系统中存入数据时，先使用散列函数计算出每份文件的<strong>散列值</strong>，定期把文档管理器中的文件散列值与存入时的散列值进行对比，判断文件内容有无被篡改或者损坏！</p>
+<h2 id="0X03、数据身份验证"><a href="#0X03、数据身份验证" class="headerlink" title="0X03、数据身份验证"></a>0X03、数据身份验证</h2><p>继续回顾Yu9与黑客的小故事，假设黑客通过某种手段获取到了文件管理系统的访问和写入权限！他不仅可以更改文件，还可以更改文件的散列值。此时，Yu9就无法有效判断文件是否被篡改！</p>
+<blockquote>
+<p>假设数据是test，生成的散列值是qwe。</p>
+<p>判断数据有没有被篡改，把数据使用散列函数生成散列值，与qwe比较相同则说明数据完整未被篡改，不相同则说明数据被篡改。</p>
+<ul>
+<li>黑客把数据改成test2，并生成散列值asd并替换掉qwe</li>
+<li>此时存在系统中的数据是test2，散列值是asd。</li>
+</ul>
+<p>Yu9判断数据有无被篡改就是通过把数据散列得到散列值与存入的散列值对比。</p>
+<p>Yu9把test2散列后得到散列值asd，与此时的散列值对比一看一模一样。做出判断数据没被篡改。</p>
+<p>但是此时数据已经被篡改。</p>
+<p>此时，有人会疑惑，Yu9咋这么笨，散列值被篡改你都发现不了。或者说为啥不把散列值存到别的地方。嗯嗯嗯…..如果说系统中文件有一千个或者一万个，难道每一个都记得住吗？存到别的地方，又要如何做到一一对应呢？所以说这是没法改变的，必须存到一块！</p>
+</blockquote>
+<p>聪明的Yu9要防御黑客，他有想到了另一个办法。在存入数据时，保证数据的完整性的同时又添加了一个功能，<strong>数据身份验证</strong>。通俗的说就是：数据的来源、谁创建了这个数据。</p>
+<p>数据身份验证确保数据读取器可以验证数据写入者的身份！该功能的两个重要因素，秘钥、散列秘钥。下边给大家讲讲这两个概念！</p>
+<h4 id="1、秘钥"><a href="#1、秘钥" class="headerlink" title="1、秘钥"></a>1、秘钥</h4><p>秘钥是什么？把它想象成钥匙，只有自己的钥匙才能打开自家的房门。那在计算机的世界中秘钥就是只有自己知道，很难被别人猜到的数字、字符串或者字符等等。</p>
+<p>​		等等，到这就会有人到这就会说，那你说这不就是密码吗？简直一毛一样。</p>
+<p>​		嗯嗯…..确实差不多，那就再补充几点，来区分密码和秘钥。		</p>
+<ul>
+<li>含义不同：密钥是一组用于加密和解密数据的参数，可以是数字、字符、符号或其他形式的数据；而密码通常指的是由字母、数字、符号组成的机密信息，用于身份验证或访问控制。</li>
+<li>使用方式不同：密钥通常用于加密和解密数据或数字签名等加密操作；而密码则用于身份验证，例如登录电子邮件、社交网站或其他应用程序时需要输入的密码。</li>
+<li>长度不同：密钥通常比密码更长，因为它需要足够强大以防止被破解。密码的长度通常在8-16个字符之间。</li>
+<li>存储方式不同：密钥通常需要存储在安全的地方，例如硬件安全模块、密码保险箱或加密卡中，以保护其安全性；而密码通常存储在密码管理器、云存储服务或用户记忆中。</li>
+</ul>
+<p><strong>比较常见的秘钥：</strong></p>
+<ul>
+<li>随机数字</li>
+<li>密码短语</li>
+</ul>
+<h4 id="2、秘钥散列"><a href="#2、秘钥散列" class="headerlink" title="2、秘钥散列"></a>2、秘钥散列</h4><p>这个也好理解。还是继续回顾小故事！</p>
+<p>Yu9为了保证文档管理系统中数据的安全，它添加了数据身份验证功能。具体怎么实现呢？</p>
+<p>首先，他先生成一个秘钥：<code>Yu9shidashuaigehahahaha</code>。然后再存入文件时，把<code>文件+秘钥</code>通过散列函数生成一个散列值。把这个值和文件一块存入系统中。即使黑客把文件和散列值都改了。Yu9还是可以判断出数据有无被篡改。</p>
+<p>说明：</p>
+<p>假设数据是test，秘钥Yu9。test+Yu9生成的散列值qwe</p>
+<p>黑客更改数据成test2， 生成的散列值asd并替换掉qwe。</p>
+<p>此时Yu9使用，test2+Yu9生成的散列值与asd对比，发现不一样。判断数据被篡改。</p>
+<h4 id="3、HMAC函数"><a href="#3、HMAC函数" class="headerlink" title="3、HMAC函数"></a>3、HMAC函数</h4><p>HMAC（Hash-based Message Authentication Code）是一种基于哈希函数的消息认证码算法，可以用于验证数据完整性和身份验证。它结合了加密哈希函数和密钥，以产生一个具有强韧性的消息验证代码。</p>
+<p>具体来说，HMAC算法通过将密钥与消息组合，然后利用散列函数进行计算，生成一个消息认证码。这个消息认证码可以用于验证消息的完整性和身份验证。</p>
+<p><strong>HMAC算法的优点包括：</strong></p>
+<ol>
+<li>强韧性：HMAC算法具有强大的抗攻击性，能够防止大多数攻击，如生日攻击、碰撞攻击和长度扩展攻击等。</li>
+<li>灵活性：HMAC算法可以使用多种哈希函数，例如MD5、SHA-1、SHA-256等，并且可以支持不同的密钥长度和消息长度。</li>
+<li>安全性：由于HMAC算法使用了密钥，因此它可以提供更高的安全保障，防止数据被篡改和伪造。</li>
+</ol>
+<p>总之，HMAC算法是一种基于哈希函数的消息认证码算法，具有强韧性、灵活性和安全性等优点，已经被广泛应用于网络安全、数据通信和数字签名等领域。</p>
+<h2 id="0X04、时序攻击"><a href="#0X04、时序攻击" class="headerlink" title="0X04、时序攻击"></a>0X04、时序攻击</h2><p>时序攻击是一种基于时间差异的侧信道攻击技术，是Yu9这样的安服仔接触不到的高度。</p>
+<p>数据完整性和数据身份验证的验证都是通过比较散列值来完成。比较的过程就可能存在不安全的情况。</p>
+<p>举例：</p>
+<p><code>qwe</code>和<code>qwa</code>是两个散列值，我们现在对它进行比较。为了节省时间，我们可以逐个字符进行比较，若第一个字符串都不相等，则他们就不相等，则可以结束比较。第一个相同之后，在进行比较下一个。依次类推….</p>
+<p>假设比较一个字符串的时间是<code>1s</code></p>
+<ul>
+<li>qwe和asd比较，只要1s即可，第一个字符不行同，直接得出结果不相同</li>
+<li>qwe和qsa比较，则需要2s，比较第一个相同花费1s，继续，比较第二个再花费1s，不同，总计2s得出结论。</li>
+<li>qwe和qws，同理，需要3s</li>
+</ul>
+<p>知道我要说什么了吗？</p>
+<p>Yu9为了省事，整了一个定期验证数据的方法！现在系统中存入test，秘钥Yu9。test+Yu9的散列值为qwe。黑客可以拿到test数据，同时对数据进行散列可以知道散列值是3位，但是不知道秘钥。</p>
+<p>黑客就不断调用验证数据的方法，传入构造的散列，比如：asd、qsd、qwd通过响应的时间的不同，来逐个字符破解。最终的破解出散列值。</p>
+<h2 id="0X05、参考"><a href="#0X05、参考" class="headerlink" title="0X05、参考"></a>0X05、参考</h2><p><a class="link"   target="_blank" rel="noopener" href="https://www.cnblogs.com/goloving/p/15242372.html" >https://www.cnblogs.com/goloving/p/15242372.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://www.liaoxuefeng.com/wiki/1252599548343744/1304227729113121" >https://www.liaoxuefeng.com/wiki/1252599548343744/1304227729113121<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://program-think.medium.com/%E6%89%AB%E7%9B%B2%E6%96%87%E4%BB%B6%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A0%A1%E9%AA%8C-%E5%85%B3%E4%BA%8E%E6%95%A3%E5%88%97%E5%80%BC%E5%92%8C%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D-d9b3d4fd2e13" >https://program-think.medium.com/扫盲文件完整性校验-关于散列值和数字签名-d9b3d4fd2e13<i class="fas fa-external-link-alt"></i></a></p>
+<p>[美]丹尼斯·伯恩—python全栈安全</p>
+<h3 id="0X06-原文地址"><a href="#0X06-原文地址" class="headerlink" title="0X06 原文地址"></a>0X06 原文地址</h3><p>转载自公众号：安服仔Yu9<br>原文地址：<a class="link"   target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/FgIRltZd5ehs-3x8SccUxQ" >https://mp.weixin.qq.com/s/FgIRltZd5ehs-3x8SccUxQ<i class="fas fa-external-link-alt"></i></a></p>
+
+                </div>
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                            <ul class="post-tags-box border-box">
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/blog/tags/%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8/">前端安全</a>
+                                    </li>
+                                
+                            </ul>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/blog/2024/01/24/240124%E4%BB%8E%E5%89%8D%E7%AB%AF%E9%AA%8C%E7%AD%BE%E4%B8%8E%E5%8A%A0%E8%A7%A3%E5%AF%86%E5%AD%A6%E4%B9%A0Yakit%E4%B8%ADWebFuzzer%E7%83%AD%E5%8A%A0%E8%BD%BD/"
+                                   title="从前端验签与加解密学习Yakit中WebFuzzer热加载"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">从前端验签与加解密学习Yakit中WebFuzzer热加载</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/blog/2024/01/02/240102%E5%BC%BA%E7%BD%91hellospring%E5%BC%95%E5%87%BASSTI%E7%9A%84%E5%AD%A6%E4%B9%A0/"
+                                   title="强网hellospring引出SSTI的学习"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">强网hellospring引出SSTI的学习</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc right-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0X00-%E5%89%8D%E8%A8%80"><span class="nav-text">0X00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X01-%E6%95%A3%E5%88%97"><span class="nav-text">0X01 散列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF%E6%95%A3%E5%88%97%EF%BC%9F"><span class="nav-text">1、什么是散列？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E6%95%A3%E5%88%97%E7%9A%84%E5%8F%91%E5%B1%95%E5%8F%B2"><span class="nav-text">2、散列的发展史</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E7%A2%B0%E6%92%9E"><span class="nav-text">3、碰撞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%A2%B0%E6%92%9E%EF%BC%9F"><span class="nav-text">什么是碰撞？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A2%B0%E6%92%9E%E8%83%BD%E4%B8%8D%E8%83%BD%E9%81%BF%E5%85%8D%EF%BC%9F"><span class="nav-text">碰撞能不能避免？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E6%95%A3%E5%88%97%E7%9A%84%E7%89%B9%E5%BE%81"><span class="nav-text">4、散列的特征</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%E3%80%81%E9%80%89%E6%8B%A9%E5%8A%A0%E5%AF%86%E6%95%A3%E5%88%97%E5%87%BD%E6%95%B0"><span class="nav-text">5、选择加密散列函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8D%E5%AE%89%E5%85%A8%E7%9A%84%E6%95%A3%E5%88%97%E5%87%BD%E6%95%B0"><span class="nav-text">不安全的散列函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E7%9A%84%E6%95%A3%E5%88%97%E5%87%BD%E6%95%B0"><span class="nav-text">安全的散列函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X02%E3%80%81%E6%95%B0%E6%8D%AE%E5%AE%8C%E6%95%B4%E6%80%A7"><span class="nav-text">0X02、数据完整性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF%E6%95%B0%E6%8D%AE%E5%AE%8C%E6%95%B4%E6%80%A7%EF%BC%9F"><span class="nav-text">1、什么是数据完整性？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A0%A1%E9%AA%8C"><span class="nav-text">2、完整性校验</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81Yu9%E4%B8%8E%E9%BB%91%E5%AE%A2%E7%9A%84%E5%B0%8F%E6%95%85%E4%BA%8B"><span class="nav-text">3、Yu9与黑客的小故事</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X03%E3%80%81%E6%95%B0%E6%8D%AE%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81"><span class="nav-text">0X03、数据身份验证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E7%A7%98%E9%92%A5"><span class="nav-text">1、秘钥</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81%E7%A7%98%E9%92%A5%E6%95%A3%E5%88%97"><span class="nav-text">2、秘钥散列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81HMAC%E5%87%BD%E6%95%B0"><span class="nav-text">3、HMAC函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X04%E3%80%81%E6%97%B6%E5%BA%8F%E6%94%BB%E5%87%BB"><span class="nav-text">0X04、时序攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X05%E3%80%81%E5%8F%82%E8%80%83"><span class="nav-text">0X05、参考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0X06-%E5%8E%9F%E6%96%87%E5%9C%B0%E5%9D%80"><span class="nav-text">0X06 原文地址</span></a></li></ol></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="border-box website-info-box shields">
+        
+            <div class="info-item">
+                
+                <a class="shields-item">
+                    <img src="https://img.shields.io/badge/Since-2023_--_2024-dodgerblue?style=flat-square">
+                </a>
+                
+                    <a class="shields-item" href="/blog/">
+                        <img src="https://img.shields.io/badge/WebMaster-Yu9-dodgerblue?style=flat-square">
+                    </a>
+                
+                
+                <a class="shields-item" href="https://hexo.io" target="_blank">
+                    <img src="https://img.shields.io/badge/Powered_by-Hexo-dodgerblue?style=flat-square">
+                </a>
+                <a class="shields-item" href="https://github.com/XPoet/hexo-theme-keep" target="_blank">
+                    <img class="shields-keep-version" src="https://img.shields.io/badge/Theme-Keep-dodgerblue?style=flat-square">
+                </a>
+                
+            </div>
+            
+                <div class="info-item">
+                    
+                        
+                    
+                </div>
+            
+        
+
+        <div class="count-item info-item shields">
+            
+                <span class="count-box border-box word">
+                    <span class="item-type border-box">总字数</span>
+                    <span class="item-value border-box word">40.7k</span>
+                </span>
+            
+
+            
+                <span class="count-box border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+                <span class="count-box border-box pv">
+                    <span class="item-type border-box">访问量</span>
+                    <span class="item-value border-box pv" id="busuanzi_value_site_pv"></span>
+                </span>
+            
+        </div>
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="tools-list border-box">
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-toggle-theme-mode flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0X00-%E5%89%8D%E8%A8%80"><span class="nav-text">0X00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X01-%E6%95%A3%E5%88%97"><span class="nav-text">0X01 散列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF%E6%95%A3%E5%88%97%EF%BC%9F"><span class="nav-text">1、什么是散列？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E6%95%A3%E5%88%97%E7%9A%84%E5%8F%91%E5%B1%95%E5%8F%B2"><span class="nav-text">2、散列的发展史</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E7%A2%B0%E6%92%9E"><span class="nav-text">3、碰撞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%A2%B0%E6%92%9E%EF%BC%9F"><span class="nav-text">什么是碰撞？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A2%B0%E6%92%9E%E8%83%BD%E4%B8%8D%E8%83%BD%E9%81%BF%E5%85%8D%EF%BC%9F"><span class="nav-text">碰撞能不能避免？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E6%95%A3%E5%88%97%E7%9A%84%E7%89%B9%E5%BE%81"><span class="nav-text">4、散列的特征</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%E3%80%81%E9%80%89%E6%8B%A9%E5%8A%A0%E5%AF%86%E6%95%A3%E5%88%97%E5%87%BD%E6%95%B0"><span class="nav-text">5、选择加密散列函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8D%E5%AE%89%E5%85%A8%E7%9A%84%E6%95%A3%E5%88%97%E5%87%BD%E6%95%B0"><span class="nav-text">不安全的散列函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E7%9A%84%E6%95%A3%E5%88%97%E5%87%BD%E6%95%B0"><span class="nav-text">安全的散列函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X02%E3%80%81%E6%95%B0%E6%8D%AE%E5%AE%8C%E6%95%B4%E6%80%A7"><span class="nav-text">0X02、数据完整性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF%E6%95%B0%E6%8D%AE%E5%AE%8C%E6%95%B4%E6%80%A7%EF%BC%9F"><span class="nav-text">1、什么是数据完整性？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A0%A1%E9%AA%8C"><span class="nav-text">2、完整性校验</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81Yu9%E4%B8%8E%E9%BB%91%E5%AE%A2%E7%9A%84%E5%B0%8F%E6%95%85%E4%BA%8B"><span class="nav-text">3、Yu9与黑客的小故事</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X03%E3%80%81%E6%95%B0%E6%8D%AE%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81"><span class="nav-text">0X03、数据身份验证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E7%A7%98%E9%92%A5"><span class="nav-text">1、秘钥</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81%E7%A7%98%E9%92%A5%E6%95%A3%E5%88%97"><span class="nav-text">2、秘钥散列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81HMAC%E5%87%BD%E6%95%B0"><span class="nav-text">3、HMAC函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X04%E3%80%81%E6%97%B6%E5%BA%8F%E6%94%BB%E5%87%BB"><span class="nav-text">0X04、时序攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X05%E3%80%81%E5%8F%82%E8%80%83"><span class="nav-text">0X05、参考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0X06-%E5%8E%9F%E6%96%87%E5%9C%B0%E5%9D%80"><span class="nav-text">0X06 原文地址</span></a></li></ol></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+<!-- common -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/libs/anime.min.js"></script>
+
+<!-- local-search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="pjax">
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/libs/pjax.min.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart()
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd()
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'))
+            KEEP.initExecute()
+        });
+    });
+</script>
+
+
+
+
+    
+
+</body>
+</html>

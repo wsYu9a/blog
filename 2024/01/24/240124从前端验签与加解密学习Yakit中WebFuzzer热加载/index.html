@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="Yu9">
+    
+    <title>
+        
+            从前端验签与加解密学习Yakit中WebFuzzer热加载 |
+        
+        Yu9&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/blog/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/blog/images/logo.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/font/css/brands.min.css">
+    
+        
+            
+                
+<link rel="stylesheet" href="/blog/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"wsyu9a.github.io","root":"/blog/","language":"zh-CN","path":"search.xml"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#999999","title":"Yu9's Blog","author":"Yu9","avatar":"/images/avatar.png","logo":"/images/logo.png","favicon":"/images/logo.png"},"menu":{"Home":"/","Archives":"/archives","Tags":"/tags","About":"/about"},"first_screen":{"enable":true,"background_img":"/images/bgc.png","background_img_dark":"/images/bgc.png","description":"Runtime.getRuntime().exec(\"变有钱\")","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/wsYu9a","weixin":"img | /images/wechat.jpg"}},"scroll":{"progress_bar":false,"percent":true,"hide_header":true},"home":{"category":false,"tag":true,"announcement":null},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":true},"datetime_format":"YYYY-MM-DD","copyright_info":false,"share":true,"reward":{"enable":false,"img_link":null,"text":null}},"code_block":{"tools":{"enable":true,"style":"default"},"highlight_theme":"obsidian"},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":true,"page_pv":true}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.21"},"waline":{"server_url":null,"reaction":false,"version":2},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":true},"footer":{"since":2023,"word_count":true,"icp":{"enable":false,"record_code":null,"url":"https://beian.miit.gov.cn"},"site_deploy":{"enable":false,"provider":"github","url":null},"shields_style":{"enable":true,"custom":[{"link_url":null,"img_url":null}]}},"inject":{"enable":true,"css":["/css/custom.css"]},"root":"/blog","source_data":{},"version":"4.1.0"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <i class="pjax-progress-icon fas fa-circle-notch fa-spin"></i>
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left border-box">
+            
+                <a class="logo-image border-box" href="/blog/">
+                    <img src="/blog/images/logo.png">
+                </a>
+            
+            <a class="site-name border-box" href="/blog/">
+               Yu9&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/"
+                            >
+                                
+                                首页
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/archives"
+                            >
+                                
+                                归档
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/tags"
+                            >
+                                
+                                标签
+                            </a>
+                        </li>
+                    
+                        
+                        <li class="menu-item">
+                            <a class=""
+                               href="/blog/about"
+                            >
+                                
+                                关于
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/"
+                    >首页</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/archives"
+                    >归档</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/tags"
+                    >标签</a>
+                </li>
+            
+                
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/blog/about"
+                    >关于</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        从前端验签与加解密学习Yakit中WebFuzzer热加载
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/blog/images/avatar.png">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">Yu9</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2024-01-24</span>
+            </span>
+
+            <span class="meta-info-item post-update-date">
+                <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                <span class="datetime" data-updated="Tue Mar 19 2024 02:59:46 GMT+0000">2024-03-19</span>
+            </span>
+        
+
+        
+
+        
+            <span class="post-tag meta-info-item border-box">
+                <ul class="post-tag-ul">
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/blog/tags/%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8/">前端安全</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>3.9k 字</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-min2read">
+                <i class="icon fas fa-clock"></i>&nbsp;<span>15 分钟</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-pv">
+                <i class="icon fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body">
+                    
+
+                    <h2 id="0X00-前言"><a href="#0X00-前言" class="headerlink" title="0X00 前言"></a>0X00 前言</h2><p>在数据安全越来越重视的情况下，请求包、响应包中有明文字段的应用越来越少了，不管是app还是web，金融、通信，民生以及其他比较重要的行业，都用到了加解密。so，之前没有接触到这方面的Yu9打算学习一下。然后注意到了yakit中的<code>高级前端加解密与验签实战</code>靶场，想着通过<strong>Yakit靶场</strong>一块来看看目前比较流行的<strong>前端加解密与验签</strong>以及其存在的安全问题！</p>
+<p>本来已经写完了整个靶场的通关教程，<code>还发现了其中一个靶场存在的bug。</code>其中编写脚本使用的都是<code>python</code>，怪我没有看官方之前发的打靶教程，写完之后才看到了官方的教程，一对比，发现使用yakit和它的热加载来解决这个问题更加方便（也可能是咱python学的太差）！所以之前计划发的文章就不发公众号了，通过篇文章一块来学习一下yakit的热加载功能。</p>
+<p><strong>yakit语法官方教程</strong>：<a class="link"   target="_blank" rel="noopener" href="https://yaklang.io/docs/intro/" >https://yaklang.io/docs/intro/<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>yakit热加载教程</strong>：<a class="link"   target="_blank" rel="noopener" href="https://yaklang.io/products/Web%20Fuzzer/fuzz-hotpatch" >https://yaklang.io/products/Web%20Fuzzer/fuzz-hotpatch<i class="fas fa-external-link-alt"></i></a></p>
+<p><strong>Yu9之前写的靶场通关笔记</strong>：<a href="https://wsyu9a.github.io/FrontEndSec/">https://wsyu9a.github.io/FrontEndSec/</a></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/23/65afb2202c7de.png"  alt="image-20240123203333222"></p>
+<h2 id="0X01-破解验签防篡改"><a href="#0X01-破解验签防篡改" class="headerlink" title="0X01 破解验签防篡改"></a>0X01 破解验签防篡改</h2><p>之前Yu9写过的一篇文章，<strong>数据完整性与数据身份校验</strong><a class="link"   target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/FgIRltZd5ehs-3x8SccUxQ%EF%BC%8C%E5%85%B6%E4%B8%AD%E5%B0%B1%E6%B6%89%E5%8F%8A%E4%BA%86%E4%B8%80%E4%BA%9B%E6%95%B0%E6%8D%AE%E9%98%B2%E7%AF%A1%E6%94%B9%E7%9A%84%E6%96%B9%E6%A1%88%EF%BC%8C%E5%A4%A7%E5%AE%B6%E5%8F%AF%E4%BB%A5%E9%80%9A%E8%BF%87%E8%BF%99%E7%AF%87%E6%96%87%E7%AB%A0%E5%AF%B9%E7%AD%BE%E5%90%8D%E6%8A%80%E6%9C%AF%E6%9C%89%E4%B8%80%E4%B8%AA%E5%88%9D%E6%AD%A5%E7%9A%84%E4%BA%86%E8%A7%A3%EF%BC%81" >https://mp.weixin.qq.com/s/FgIRltZd5ehs-3x8SccUxQ，其中就涉及了一些数据防篡改的方案，大家可以通过这篇文章对签名技术有一个初步的了解！<i class="fas fa-external-link-alt"></i></a></p>
+<blockquote>
+<p>签名验证（又叫验签或签名）是验证请求参数是否被篡改的一种常见安全手段，验证签名方法主流的有两种：</p>
+<p>1）一种是 KEY+哈希算法，例如 HMAC-MD5 &#x2F; HMAC-SHA256 等，比如要发送的数据是：<code>username=&quot;admin&quot;&amp;password=&quot;123456&quot;</code>。在提交数据前把数据通过<code>KEY+哈希算法</code>生成一个哈希值，发送数据是携带这个哈希值。例如：</p>
+<ul>
+<li><p>正常数据：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;username&quot;</span><span class="punctuation">:</span> <span class="string">&quot;admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;password&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123456&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>签名数据：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;signature&quot;</span><span class="punctuation">:</span> <span class="string">&quot;7d113a1544cd53ff6c527c865511be4f18d4372a7fa571dbc035f0fc12b2b092&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;key&quot;</span><span class="punctuation">:</span> <span class="string">&quot;31323334313233343132333431323334&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;username&quot;</span><span class="punctuation">:</span> <span class="string">&quot;admin&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;password&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123456&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>2）另一种是使用非对称加密加密比如RSA把生成的哈希值（signature）在进行一层加密。</p>
+<p>注：这段内容借鉴yakit<strong>前端验证签名（验签）表单：HMAC-SHA256</strong>靶场！</p>
+</blockquote>
+<p>通过靶场（<code>前端验证签名（验签）表单：HMAC-SHA256</code>）来具体看看：</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/23/65afba6eb5b24.png"  alt="image-20240123210900376"></p>
+<p>在提交数据后，会先验证签名。签名验证通过后在验证用户名、密码</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/23/65afbbed4f2d7.png"  alt="image-20240123211523922"></p>
+<p>那签名真的可以防止数据被篡改吗？我们抓包修改个数据试试（把密码改成123123）</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/23/65afbca365933.png"  alt="image-20240123211834478"></p>
+<p>可以看到只要数据被篡改，签名就会验证失败。爆破的话讲究不用说了，只有我们最开始的那个数据包可以验证通过。</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/23/65afbd6e57ef0.png"  alt="image-20240123212148444"></p>
+<p><strong>那我们如何才可以绕过签名篡改数据呢？</strong></p>
+<p>1）首先我们应该明确一下签名签证过程的原理和步骤</p>
+<p><strong>原理</strong></p>
+<p>前端：把数据<code>按照一定格式</code>使用哈希算法进行<code>秘钥哈希</code>运算生成<code>哈希值</code>，发送数据包携带这个<code>哈希值和key</code></p>
+<p>后端：此时后端拿到数据有（以上边靶场为例）：signature、key、username、password。把username和password按照一定格式在进行秘钥哈希运算生成的值与signature对比，若一样验证通过！</p>
+<p><strong>步骤</strong></p>
+<p>绕过签名的方式就是，伪造signature值：改变数据的同时生成对应的signature值，修改数据的时候，连带签名一起修改掉就好了。</p>
+<p>那我们伪造signature的前提就是需要知道前端生成它的规则。</p>
+<p>2）一半这个步骤就是通过javascript实现，那我们看看其中到底做了哪些处理！</p>
+<p>首先就是找一下发包是调用了那个js来做的处理。</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/16/65a6297aaf016.png"  alt="image-20240116150009272"> </p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/16/65a629ea987fe.png"  alt="image-20240116150201082"> </p>
+<p>找到之后，我们就具体分析一下具体做了哪些处理</p>
+<blockquote>
+<p>CryptoJS是一个流行的JavaScript密码学库，被广泛用于前端开发中处理加密、解密、哈希和编码等密码学操作</p>
+<p>CryptoJS 的 key 在没有明确指定编码方式的情况下，默认的 <code>toString</code> 方法将输出十六进制 (Hex) 格式的字符串。</p>
+</blockquote>
+<p><strong>01</strong>生成一个 KEY，默认为 16 位数 1234123412341234，签名时使用的是UTF-8 编码字符串</p>
+<p><strong>02</strong>签名前的格式，例如：<code>username=admin&amp;password=123456</code></p>
+<p><strong>03</strong>签名使用的哈希算法是<code>HmacSha256</code>，输出结果十六进制</p>
+<p>3）明白这个逻辑后，我们可以使用 Yaklang 中codec模块的<code>HmacSha256</code>函数来模拟这个过程！</p>
+<blockquote>
+<p>热加载是一种高级技术，让 Yak 成为 Web Fuzzer 和用户自定义代码中的桥梁，它允许我们编写一段 Yak 函数，在 Web Fuzzer 过程中使用，从而实现自定义 fuzztag 或更多功能。</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">sign = <span class="function"><span class="keyword">func</span><span class="params">(p)</span></span> &#123;</span><br><span class="line">    key = <span class="string">`1234123412341234`</span></span><br><span class="line">    usernameDict = [<span class="string">&quot;admin&quot;</span>]</span><br><span class="line">    passwordDict = x<span class="string">&quot;&#123;&#123;payload(pass_top25)&#125;&#125;&quot;</span> <span class="comment">// 我们可以使用x前缀字符串来通过fuzztag语法获取pass_top25字典中的值</span></span><br><span class="line">    <span class="comment">// passwordDict = [&quot;admin&quot;, &quot;123456&quot;, &quot;admin123&quot;, &quot;88888888&quot;, &quot;666666&quot;] // 也可以直接使用手写的list</span></span><br><span class="line">    resultList = []</span><br><span class="line">    <span class="keyword">for</span> username in usernameDict &#123;</span><br><span class="line">        <span class="keyword">for</span> password in passwordDict &#123;</span><br><span class="line">            data=f<span class="string">`username=$&#123;username&#125;&amp;password=$&#123;password&#125;`</span></span><br><span class="line">            signature = codec.EncodeToHex(codec.HmacSha256(key, data))</span><br><span class="line">            m=&#123;</span><br><span class="line">                <span class="string">&quot;signature&quot;</span>: signature,</span><br><span class="line">                <span class="string">&quot;key&quot;</span>: <span class="string">&quot;31323334313233343132333431323334&quot;</span>,</span><br><span class="line">                <span class="string">&quot;username&quot;</span>: username,</span><br><span class="line">                <span class="string">&quot;password&quot;</span>: password</span><br><span class="line">            &#125;</span><br><span class="line">            res=json.dumps(m)</span><br><span class="line">            resultList.Append(res)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> resultList    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/23/65afd52dede8a.png"  alt="image-20240123230308016"></p>
+<h2 id="0X02-渗透前端JS加密表单"><a href="#0X02-渗透前端JS加密表单" class="headerlink" title="0X02 渗透前端JS加密表单"></a>0X02 渗透前端JS加密表单</h2><blockquote>
+<p>当我们学会测试带验签的接口的基本技能之后，我们会自我反省这个保护措施其实只是增加了操作的复杂度和难度，并不是真正的能解决“防篡改防重放的问题”。</p>
+<p>当然，我们的密码仍然在通信过程中<strong>“明文传输”</strong>；</p>
+<p>“明文密码传输”的不合规项一直是一个备受争议的选项，甚至前些年大家觉得这就是用来“凑数”的安服报告内容。</p>
+<p>但是戏剧性的是，随着一些甲方单位真的全 API 通信上了加密之后，普通测试手段失效了，大家不再轻视这个问题，开始广泛讨论“如何绕过前端加密进行安全测试”这类话题。</p>
+<p>注：这段话来源yakit公众号<strong>渗透测试高级技巧：分析验签与前端加密（一）</strong><a class="link"   target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ni3sVp0Gh-CwyMPuwk__Cw" >https://mp.weixin.qq.com/s/ni3sVp0Gh-CwyMPuwk__Cw<i class="fas fa-external-link-alt"></i></a></p>
+</blockquote>
+<p>在前端加密中<strong>AES-CBC&#x2F;ECB</strong> 的组合可能是我们最常遇到的两种，在正式开始之前我们先对AES加密算法进行扫盲，然后在通过<code>CryptoJS.AES(CBC) 前端加密登陆表单</code>这个靶场来了解前端加密的渗透。</p>
+<h3 id="AES加密概述"><a href="#AES加密概述" class="headerlink" title="AES加密概述"></a>AES加密概述</h3><p><strong>秘钥</strong></p>
+<p>AES是一种<code>对称加密</code>算法，用于加密和解密数据。它是目前应用最广泛的加密算法之一。</p>
+<p>AES加密算法采用<code>分组密码</code>（block cipher）的方式，将明文分成固定长度的数据块，然后对每个数据块进行相同的加密操作，以达到加密整个数据的目的。加密和解密都使用相同的密钥，因此属于对称加密算法。</p>
+<p>AES加密算法的密钥长度可以是128位、192位或256位。其中，128位密钥被广泛使用，256位密钥的安全性最高。AES算法还有多种模式，如ECB、CBC、CFB、OFB等，其中CBC模式被广泛使用。</p>
+<p><strong>填充</strong></p>
+<p>上边我们提到了AES加密算法采用分组加密的方式。那什么是分组加密呢？</p>
+<p>AES算法在对明文加密的时候，并不是把整个明文一股脑加密成一整段密文，而是把明文拆分成一个个独立的明文块，每一个明文块长度<code>128bit</code>。这些明文块经过AES加密器的复杂处理，生成一个个独立的密文块，这些密文块拼接在一起，就是最终的AES加密结果。</p>
+<p>若一个明文的长度是200bit，按照每个明文快128bit来拆分的话，第二个明文块只有72bit。不足128bit。这时候就需要对不足128bit的明文块进行填充（Padding）。</p>
+<blockquote>
+<p>一个字节是4bit，英文1字节，中文utf-8编码3字节、gbk编码2字节。128比特&#x3D;16字节</p>
+</blockquote>
+<p>01、NoPadding：</p>
+<p>不做任何填充，但是要求明文必须是16字节的整数倍。</p>
+<p>02、PKCS7Padding（默认）：</p>
+<p>若明文块不足16个字节，在明文块末尾补足相应数量的字符，且每个字节的值等于缺少的字符数。</p>
+<p>例：{1,2,3,4,5,a,b,c,d,e}，缺少6个字节，则补全为{1,2,3,4,5,a,b,c,d,e,6,6,6,6,6,6}</p>
+<p>03、ISO10126Padding：</p>
+<p>若明文块不足16个字节，在明文块末尾补足相应数量的字节，最后一个字符值等于缺少的字符数，其他字符填充随机数。</p>
+<p>比如明文：{1,2,3,4,5,a,b,c,d,e},缺少6个字节，则可能补全为{1,2,3,4,5,a,b,c,d,e,5,c,3,G,$,6}</p>
+<p><strong>模式</strong></p>
+<p>AES算法的模式是指在进行分组密码加密时，对数据块的处理方式。常见的AES加密算法的模式包括：ECB、CBC、CFB、OFB等，其中CBC模式被广泛使用。下边我们主要看一下ECB模式与CBC模式</p>
+<p>01、ECB</p>
+<ul>
+<li>电码本模式，是最简单的块密码加密模式，加密前根据加密块大小（如AES为128位）分成若干块，之后将每块使用相同的密钥单独加密，解密同理。</li>
+<li>ECB相同的数据块密钥一样的话输出的密文也一样，容易被攻击。</li>
+</ul>
+<p>02、CBC</p>
+<ul>
+<li>密码分组链接模式，先将明文切分为块，每一块与上一块的密文块进行异或运算后，再使用密钥进行加密。第一个块需要使用初始化向量（IV），一般来说，每次加密时都会随机产生一个不同的比特序列来作为初始化向量。</li>
+<li>递归加密带来的问题是没有办法随机访问各个区块了，访问某个区块必须解出前一个区块数据。</li>
+<li>这种方式相对ECB提高了安全性，是常用的工作模式，用于SSL。缺点是加密过程是串行的，无法被并行化</li>
+</ul>
+<p>除了ECB无须设置初始化向量IV而不安全之外，其它AES工作模式都必须设置向量IV</p>
+<h3 id="CBC模式下的加密登录表单"><a href="#CBC模式下的加密登录表单" class="headerlink" title="CBC模式下的加密登录表单"></a>CBC模式下的加密登录表单</h3><p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/23/65afda5909af1.png"  alt="image-20240123232511397"></p>
+<p>首先我们需要做的就是先了解一下其加密的逻辑：</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/23/65afdb3480b84.png"  alt="image-20240123232850729"> </p>
+<p><strong>01</strong>生成一个初始iv，长度为 16 字节的随机字节数组，不过我们使用固定的也OK</p>
+<p><strong>02</strong>生成一个 KEY，默认为 16 位数 1234123412341234</p>
+<p><strong>02</strong>加密前的格式为json，例如：<code>&#123;&quot;username&quot;:&quot;admin&quot;,&quot;password&quot;=&quot;123456&quot;&#125;</code></p>
+<p><strong>03</strong>签名使用的哈希算法是<code>AES/CBC</code>，输出结果十六进制</p>
+<p><strong>热加载模块中编写代码：</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">dncryptAesCbc = <span class="function"><span class="keyword">func</span><span class="params">(p)</span></span> &#123;</span><br><span class="line">    key = codec.DecodeHex(<span class="string">&quot;31323334313233343132333431323334&quot;</span>)~</span><br><span class="line">    iv = codec.DecodeHex(<span class="string">&quot;880b2eaf1d19c0ae5816d3acd382775f&quot;</span>)~</span><br><span class="line">    usernameDict = [<span class="string">&quot;admin&quot;</span>]</span><br><span class="line">    passwordDict = x<span class="string">&quot;&#123;&#123;payload(pass_top25)&#125;&#125;&quot;</span> <span class="comment">// 我们可以使用x前缀字符串来通过fuzztag语法获取pass_top25字典中的值</span></span><br><span class="line">    <span class="comment">// passwordDict = [&quot;admin&quot;, &quot;123456&quot;, &quot;admin123&quot;, &quot;88888888&quot;, &quot;666666&quot;] // 也可以直接使用手写的list</span></span><br><span class="line">    resultList = []</span><br><span class="line">    <span class="keyword">for</span> username in usernameDict &#123;</span><br><span class="line">        <span class="keyword">for</span> password in passwordDict &#123;</span><br><span class="line">            m = &#123;<span class="string">&quot;username&quot;</span>:username,<span class="string">&quot;password&quot;</span>:password&#125;</span><br><span class="line">            jsonInput = json.dumps(m)</span><br><span class="line">            result = codec.AESCBCEncryptWithPKCS7Padding(key, jsonInput, iv)~</span><br><span class="line">            base64Result = codec.EncodeBase64(result)</span><br><span class="line">            resultList.Append(base64Result)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> resultList    </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/23/65afe1b7358e5.png"  alt="image-20240123235637657"></p>
+<h3 id="RSA加密AES秘钥"><a href="#RSA加密AES秘钥" class="headerlink" title="RSA加密AES秘钥"></a>RSA加密AES秘钥</h3><blockquote>
+<p>选择AES加密数据的原因是因为AES加密速度快，自然是我们的第一选择，但是缺点也明显。因为使用<code>同一个密钥</code>，如果有一方密钥泄露，那么数据也就不安全了。所以我们可以结合RSA互补二者的缺点，用AES来加密数据，使用RSA来加密传递AES密钥。</p>
+</blockquote>
+<p>下边我们通过<code>前端RSA加密AES密钥，服务器传输</code>靶场具体学习一下，在这个靶场中，我们有几个难题需要解决：</p>
+<ul>
+<li>RSA的秘钥是通过服务器传输</li>
+<li>响应体也加密无法直接判断是否成功</li>
+</ul>
+<p>当然，万能的yakit针对这几个问题都有对应的解决方案，通过<code>匹配器、数据提取器、Web Fuzzer序列</code>这些功能就可以完美解决！</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65afe7b7a0808.png"  alt="image-20240124002214144"></p>
+<p>首先第一步，还是分析具体的一个思路，然后在构造热加载代码：</p>
+<p>1）通过<code>/crypto/js/rsa/generator</code>接口获取RSA公钥私钥进行处理</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65afe8c3c02fd.png"  alt="image-20240124002642370"> </p>
+<p>2）使用AES-GCM加密数据，可以随机16位、初始iv随机12位。</p>
+<blockquote>
+<p>AES-GCM 是一种常见的对称加密算法，它结合了 AES 和 GCM（Galois&#x2F;Counter Mode）两种算法。其中，AES 用于加密数据，GCM 用于计算认证标签。</p>
+</blockquote>
+<p>3）RSA-OAEP再对AES的key和iv加密</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65afea8eabb83.png"  alt="image-20240124003421257"> </p>
+<p>4）最后输出的是base64编码后的</p>
+<p>知道他大概得逻辑后，就可以着手编写代码了</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">aesKey = <span class="string">&quot;aaaaaaaaaaaaaaaa&quot;</span></span><br><span class="line">iv = <span class="string">&quot;aaaaaaaaaaaa&quot;</span></span><br><span class="line">aesGCM = data =&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> codec.EncodeBase64(codec.AESGCMEncryptWithNonceSize12(aesKey, data, iv)~)</span><br><span class="line">&#125;</span><br><span class="line">rsaOAEP_key = (pem) =&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> codec.EncodeBase64(codec.RSAEncryptWithOAEP(pem, aesKey)~)</span><br><span class="line">&#125;</span><br><span class="line">rsaOAEP_iv = (pem) =&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> codec.EncodeBase64(codec.RSAEncryptWithOAEP(pem, iv)~)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>之后还要解决的几个问题。</p>
+<p><strong>01、服务器获取公钥</strong></p>
+<p>使用数据提取器获取服务器传输的秘钥。</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65aff10df2de5.png"  alt="image-20240124010204387"></p>
+<p>把提取字段名设置为 <code>publicKey</code>，这样我们在后续的<code>Web Fuzzer序列</code>模块中就可以当做变量使用了！</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65aff4cf2e97d.png"  alt="image-20240124011805764"> </p>
+<p><strong>02、继承获取来的秘钥</strong></p>
+<p>使用<code>Web Fuzzer序列</code>模块，按图中顺序依次进行。</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65aff639d81e2.png"  alt="image-20240124012408257"></p>
+<p><strong>03、解密响应内容</strong></p>
+<p>我们可以看到这块响应的内容也是加密过的，so我们就没有办法直接判断我们的请求是否成功！</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65aff806e1e1d.png"  alt="image-20240124013149346"></p>
+<p>所以就要解决这个办法，所以我得想法是：</p>
+<ul>
+<li>第一个请求中也提取出私钥，设置成变量。</li>
+<li>第二个请求中提取去加密的响应结果，设置成变量！</li>
+<li>新建第三个请求，热加载编写代码解密数据</li>
+</ul>
+<p>1）提取出私钥</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65affc03b180e.png"  alt="image-20240124014849985"></p>
+<p>2）提取响应的加密数据字段</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65affc22ddbe6.png"  alt="image-20240124014921230"></p>
+<p>3）vps起一个web服务接受解密数据并响应便于判断</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65b0095aba2df.png"  alt="image-20240124024545240"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65b0097af0e96.png"  alt="image-20240124024617465"> </p>
+<p>添加个一个匹配器</p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65b00b6142453.png"  alt="image-20240124025423649"></p>
+<p>4）热加载中编写rsa、aes解密代码</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">oaepDec = (pem,data) =&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">string</span>(codec.RSADecryptWithOAEP(pem, codec.DecodeBase64(data)~)~)</span><br><span class="line">&#125;</span><br><span class="line">dec = (key,data,iv) =&gt; &#123;</span><br><span class="line">    dump(key, data, iv)</span><br><span class="line">    <span class="keyword">return</span> <span class="type">string</span>(codec.AESGCMDecryptWithNonceSize12(key, codec.DecodeBase64(data)~, iv)~)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65b00a58ec482.png"  alt="image-20240124024959480"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//解密后的iv</span><br><span class="line">&#123;&#123;yak(oaepDec|&#123;&#123;p(privateKey)&#125;&#125;|&#123;&#123;p(encryptedIV)&#125;&#125;)&#125;&#125;</span><br><span class="line">//解密后的key</span><br><span class="line">&#123;&#123;yak(oaepDec|&#123;&#123;p(privateKey)&#125;&#125;|&#123;&#123;p(encryptedKey)&#125;&#125;)&#125;&#125;</span><br><span class="line">//解密后的data</span><br><span class="line">&#123;&#123;yak(dec|&#123;&#123;yak(oaepDec|&#123;&#123;p(privateKey)&#125;&#125;|&#123;&#123;p(encryptedKey)&#125;&#125;)&#125;&#125;|&#123;&#123;p(data)&#125;&#125;|&#123;&#123;yak(oaepDec|&#123;&#123;p(privateKey)&#125;&#125;|&#123;&#123;p(encryptedIV)&#125;&#125;)&#125;&#125;)&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>04、插入字段爆破</strong></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65b00ddd72681.png"  alt="image-20240124030459764"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65b00e1474fcf.png"  alt="image-20240124030554719"></p>
+<p><img   src="https://raw.githubusercontent.com/wsYu9a/Images/image/uploads/2024/01/24/65b00e36dc60f.png"  alt="image-20240124030629279"> </p>
+<h2 id="0X03-总结"><a href="#0X03-总结" class="headerlink" title="0X03 总结"></a>0X03 总结</h2><p>本文中出现的加密算法只是个例，实际应用中可能会有更多种类的算法和接口。但是，本文提供的靶场案例可以帮助大家掌握基本的加密和解密流程。只要能熟练的掌握这些内容，以后碰到别的场景咱只要稍微拓展一下，那也是手拿把掐！</p>
+<h2 id="0X04-参考"><a href="#0X04-参考" class="headerlink" title="0X04 参考"></a>0X04 参考</h2><p><a class="link"   target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ni3sVp0Gh-CwyMPuwk__Cw" >https://mp.weixin.qq.com/s/ni3sVp0Gh-CwyMPuwk__Cw<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/gMbbEV62XR5_QCACQwZnOw" >https://mp.weixin.qq.com/s/gMbbEV62XR5_QCACQwZnOw<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://zhongce.sina.com.cn/article/view/158689" >https://zhongce.sina.com.cn/article/view/158689<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="0X05-原文地址"><a href="#0X05-原文地址" class="headerlink" title="0X05 原文地址"></a>0X05 原文地址</h2><p>转载自公众号：安服仔Yu9<br>原文地址：<a class="link"   target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/x-A-ZWqE8C-HN6k9Y2QBbw" >https://mp.weixin.qq.com/s/x-A-ZWqE8C-HN6k9Y2QBbw<i class="fas fa-external-link-alt"></i></a></p>
+
+                </div>
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                            <ul class="post-tags-box border-box">
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/blog/tags/%E5%89%8D%E7%AB%AF%E5%AE%89%E5%85%A8/">前端安全</a>
+                                    </li>
+                                
+                            </ul>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/blog/2024/01/25/240125%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E5%89%8D%E7%AB%AFRSA%E5%8A%A0%E5%AF%86%E5%AE%9E%E6%88%98/"
+                                   title="记录一次前端RSA加密实战"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">记录一次前端RSA加密实战</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/blog/2024/01/06/240106%E6%95%B0%E6%8D%AE%E5%AE%8C%E6%95%B4%E6%80%A7%E4%B8%8E%E6%95%B0%E6%8D%AE%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81/"
+                                   title="数据完整性与数据身份验证"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">数据完整性与数据身份验证</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc right-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0X00-%E5%89%8D%E8%A8%80"><span class="nav-text">0X00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X01-%E7%A0%B4%E8%A7%A3%E9%AA%8C%E7%AD%BE%E9%98%B2%E7%AF%A1%E6%94%B9"><span class="nav-text">0X01 破解验签防篡改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X02-%E6%B8%97%E9%80%8F%E5%89%8D%E7%AB%AFJS%E5%8A%A0%E5%AF%86%E8%A1%A8%E5%8D%95"><span class="nav-text">0X02 渗透前端JS加密表单</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AES%E5%8A%A0%E5%AF%86%E6%A6%82%E8%BF%B0"><span class="nav-text">AES加密概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CBC%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E5%8A%A0%E5%AF%86%E7%99%BB%E5%BD%95%E8%A1%A8%E5%8D%95"><span class="nav-text">CBC模式下的加密登录表单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RSA%E5%8A%A0%E5%AF%86AES%E7%A7%98%E9%92%A5"><span class="nav-text">RSA加密AES秘钥</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X03-%E6%80%BB%E7%BB%93"><span class="nav-text">0X03 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X04-%E5%8F%82%E8%80%83"><span class="nav-text">0X04 参考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X05-%E5%8E%9F%E6%96%87%E5%9C%B0%E5%9D%80"><span class="nav-text">0X05 原文地址</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="border-box website-info-box shields">
+        
+            <div class="info-item">
+                
+                <a class="shields-item">
+                    <img src="https://img.shields.io/badge/Since-2023_--_2024-dodgerblue?style=flat-square">
+                </a>
+                
+                    <a class="shields-item" href="/blog/">
+                        <img src="https://img.shields.io/badge/WebMaster-Yu9-dodgerblue?style=flat-square">
+                    </a>
+                
+                
+                <a class="shields-item" href="https://hexo.io" target="_blank">
+                    <img src="https://img.shields.io/badge/Powered_by-Hexo-dodgerblue?style=flat-square">
+                </a>
+                <a class="shields-item" href="https://github.com/XPoet/hexo-theme-keep" target="_blank">
+                    <img class="shields-keep-version" src="https://img.shields.io/badge/Theme-Keep-dodgerblue?style=flat-square">
+                </a>
+                
+            </div>
+            
+                <div class="info-item">
+                    
+                        
+                    
+                </div>
+            
+        
+
+        <div class="count-item info-item shields">
+            
+                <span class="count-box border-box word">
+                    <span class="item-type border-box">总字数</span>
+                    <span class="item-value border-box word">40.7k</span>
+                </span>
+            
+
+            
+                <span class="count-box border-box uv">
+                    <span class="item-type border-box">访客数</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+                <span class="count-box border-box pv">
+                    <span class="item-type border-box">访问量</span>
+                    <span class="item-value border-box pv" id="busuanzi_value_site_pv"></span>
+                </span>
+            
+        </div>
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="tools-list border-box">
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-toggle-theme-mode flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0X00-%E5%89%8D%E8%A8%80"><span class="nav-text">0X00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X01-%E7%A0%B4%E8%A7%A3%E9%AA%8C%E7%AD%BE%E9%98%B2%E7%AF%A1%E6%94%B9"><span class="nav-text">0X01 破解验签防篡改</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X02-%E6%B8%97%E9%80%8F%E5%89%8D%E7%AB%AFJS%E5%8A%A0%E5%AF%86%E8%A1%A8%E5%8D%95"><span class="nav-text">0X02 渗透前端JS加密表单</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AES%E5%8A%A0%E5%AF%86%E6%A6%82%E8%BF%B0"><span class="nav-text">AES加密概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CBC%E6%A8%A1%E5%BC%8F%E4%B8%8B%E7%9A%84%E5%8A%A0%E5%AF%86%E7%99%BB%E5%BD%95%E8%A1%A8%E5%8D%95"><span class="nav-text">CBC模式下的加密登录表单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RSA%E5%8A%A0%E5%AF%86AES%E7%A7%98%E9%92%A5"><span class="nav-text">RSA加密AES秘钥</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X03-%E6%80%BB%E7%BB%93"><span class="nav-text">0X03 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X04-%E5%8F%82%E8%80%83"><span class="nav-text">0X04 参考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0X05-%E5%8E%9F%E6%96%87%E5%9C%B0%E5%9D%80"><span class="nav-text">0X05 原文地址</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+<!-- common -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/libs/anime.min.js"></script>
+
+<!-- local-search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="pjax">
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.1.0/js/libs/pjax.min.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart()
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd()
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'))
+            KEEP.initExecute()
+        });
+    });
+</script>
+
+
+
+
+    
+
+</body>
+</html>
